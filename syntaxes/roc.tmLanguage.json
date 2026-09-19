@@ -87,15 +87,32 @@
 				{
 					"include": "#punctuation"
 				}
-			]
+			],
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.interpolation.roc"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.interpolation.roc"
+				}
+			}
 		},
 		"escapes": {
 			"name": "constant.character.escape.roc",
-			"match": "\\\\\\(u[a-fA-F]{4,6}\\)"
+			"match": "\\\\(?:[\\\\\\\"'nrt$]|u\\([0-9a-fA-F]{1,8}\\))"
 		},
 		"numbers": {
-			"name": "constant.numeric.roc",
-			"match": "\\b(?:0x[0-9a-fA-F_]+\\b|0o[0-7_]+\\b|0b[01_]+\\b|[0-9][0-9_]*(?:\\.(?:U8|I8|U16|I16|U32|I32|U64|I64|U128|I128|F32|F64|Dec))?)"
+			"match": "\\b(?:(?<!\\.)([0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?(?:\\.(?:F32|F64|Dec))?|[0-9][0-9_]*[eE][-+]?[0-9]+|[0-9][0-9_]*\\.(?:F32|F64|Dec))|(0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*(?:\\.(?:U8|I8|U16|I16|U32|I32|U64|I64|U128|I128))?))",
+			"captures": {
+				"1": {
+					"name": "constant.numeric.float.roc"
+				},
+				"2": {
+					"name": "constant.numeric.integer.roc"
+				}
+			}
 		},
 		"strings": {
 			"patterns": [
@@ -115,9 +132,13 @@
 				},
 				{
 					"comment": "character",
+					"match": "'(?:[^'\\\\]|(\\\\(?:[\\\\\\\"'nrt$]|u\\([0-9a-fA-F]{1,8}\\))))'",
 					"name": "string.quoted.single.char.roc",
-					"begin": "'",
-					"end": "'"
+					"captures": {
+						"1": {
+							"name": "constant.character.escape.roc"
+						}
+					}
 				},
 				{
 					"begin": "\\\\\\\\",
@@ -126,6 +147,9 @@
 					"patterns": [
 						{
 							"include": "#interpolations"
+						},
+						{
+							"include": "#escapes"
 						}
 					]
 				}
@@ -165,12 +189,21 @@
 			"comment": "Uses a negative lookbehind to exclude a presceding dot (e.g. `.identifier`), but include two presceding dots (e.g. `..identifier`)"
 		},
 		"keywords": {
-			"match": "\\b(?:(True|False)|(if|else|import|as|for|in|return|match|var|while|dbg|expect|where|break|crash))\\b",
+			"match": "\\b(?:(True|False)|(if|else|match)|(for|while)|(return)|(import|as|in|var|dbg|expect|where|break|crash))\\b",
 			"captures": {
 				"1": {
 					"name": "constant.language.roc"
 				},
 				"2": {
+					"name": "keyword.control.conditional.roc"
+				},
+				"3": {
+					"name": "keyword.control.repeat.roc"
+				},
+				"4": {
+					"name": "keyword.control.return.roc"
+				},
+				"5": {
 					"name": "keyword.control.roc"
 				}
 			}
@@ -771,7 +804,7 @@
 		"members": {
 			"comment": "Field access, record field shorthand, or record field name",
 			"name": "variable.other.member.roc",
-			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b|(?<=[{,]\\s|\\{)[a-z_][A-Za-z0-9_]*\\b(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*)*\\s*\\})|\\b[a-z_][A-Za-z0-9_]*(?=:(?!:))"
+			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b|(?<=[{,]\\s|\\{)(?<!\\$\\{)[a-z_][A-Za-z0-9_]*\\b(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*)*\\s*\\})|\\b[a-z_][A-Za-z0-9_]*(?=:(?!:))"
 		},
 		"constructors": {
 			"name": "entity.name.type.constructor.roc",
