@@ -37,19 +37,42 @@ watch:
         --external:vscode \
         --watch
 
-# Run all the tests
+# Run every check that does not need a built VSIX
 [parallel]
-test: test-extension test-textmate-grammar grammar-bench-test
+test-fast: typecheck test-scripts test-textmate-grammar grammar-bench-test
 
-# Test the extension
+# Everything: the fast checks, then build one VSIX and test that exact file
+test: test-fast build test-vsix
+
+# Type-check the extension sources
+typecheck:
+    tsc --noEmit
+
+# Unit tests for the repository's own tooling
+test-scripts:
+    node --test scripts/vsix-lib.test.mjs
+
+# Inspect a built VSIX without launching VS Code (default: the one in build/)
+check-vsix *ARGS:
+    node scripts/check-vsix.mjs {{ ARGS }}
+
+# Install a built VSIX into an isolated VS Code and run the integration battery
+# against it and a real Roc language server. Pass a VSIX path and/or options
+# such as `--vscode-version minimum`, `--roc PATH`, `--grep hover`, `--keep`.
 [linux]
-test-extension:
-    xvfb-run -a npm run test
+test-vsix *ARGS:
+    xvfb-run -a node scripts/test-vsix.mjs {{ ARGS }}
 
-# Test the extension
 [macos]
-test-extension:
-    npm run test
+test-vsix *ARGS:
+    node scripts/test-vsix.mjs {{ ARGS }}
+
+[windows]
+test-vsix *ARGS:
+    node scripts/test-vsix.mjs {{ ARGS }}
+
+# The VSIX must work on the oldest VS Code it claims to support, and on the newest
+test-vsix-matrix *ARGS: (test-vsix "--vscode-version" "minimum" ARGS) (test-vsix "--vscode-version" "stable" ARGS)
 
 # Run the textmate grammar tests
 test-textmate-grammar:
@@ -76,7 +99,7 @@ oracle-external *ARGS:
 
 # Test the local-only oracle harness.
 oracle-test:
-    node --test scripts/highlighting-oracle.test.mjs
+    node --test
 
 grammar-bench *ARGS:
     node scripts/grammar-bench.mjs bench {{ ARGS }}

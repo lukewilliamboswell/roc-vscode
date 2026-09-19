@@ -79,7 +79,7 @@
 		}
 	},
 	"scripts": {
-		"test": "vscode-test"
+		"test": "node scripts/test-vsix.mjs"
 	},
 	"dependencies": {
 		"vscode-languageclient": "^9.0.1"
