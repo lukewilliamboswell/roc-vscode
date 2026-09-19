@@ -85,6 +85,11 @@ export function normalizeTextMateScope(scope) {
 		return "function";
 	}
 
+	// Type-level punctuation and record fields, which the oracle marks "in-typedef".
+	if (/^punctuation\.brackets\.\w+\.type\b/.test(value)) return "punctuation.bracket.in-typedef";
+	if (value.startsWith("punctuation.comma.type")) return "punctuation.delimiter.in-typedef";
+	if (value.startsWith("variable.other.member.type")) return "variable.other.member.in-typedef";
+
 	if (value.startsWith("variable.parameter")) return "variable.parameter";
 	if (value.startsWith("variable.other.member")) return "variable.other.member";
 	if (value.startsWith("variable.language") || value.startsWith("variable.builtin")) {

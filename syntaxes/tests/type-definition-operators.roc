@@ -23,7 +23,7 @@ Pair(a, b) : (a, b)
 Box2(item) := { item : item }
 # <---- entity.name.type.definition.roc
 #          ^^ keyword.operator.roc
-#               ^^^^ variable.other.member.roc
+#               ^^^^ variable.other.member.type.roc
 #                      ^^^^ storage.type.parameter.roc
 
 value : Config

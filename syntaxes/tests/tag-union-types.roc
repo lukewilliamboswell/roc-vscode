@@ -2,12 +2,12 @@
 
 Color : [Red, Green, Custom(U8, U8, U8)]
 # <----- storage.type.roc
-#       ^ punctuation.brackets.square.roc
+#       ^ punctuation.brackets.square.type.roc
 #        ^^^ entity.name.type.variant.roc
 #             ^^^^^ entity.name.type.variant.roc
 #                    ^^^^^^ entity.name.type.variant.roc
 #                           ^^ storage.type.builtin.roc
-#                                      ^ punctuation.brackets.square.roc
+#                                      ^ punctuation.brackets.square.type.roc
 
 parse : Str -> Try(U64, [InvalidNumber(Str), Empty, ..])
 #                        ^^^^^^^^^^^^^ entity.name.type.variant.roc
@@ -27,7 +27,7 @@ nested : [Scroll([Up, Down], U16)]
 
 payload : [Found({ index : U64 })]
 #          ^^^^^ entity.name.type.variant.roc
-#                  ^^^^^ variable.other.member.roc
+#                  ^^^^^ variable.other.member.type.roc
 #                          ^^^ storage.type.builtin.roc
 
 value = Red

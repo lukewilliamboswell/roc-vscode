@@ -626,138 +626,14 @@
 			]
 		},
 		"type-expression": {
+			"comment": "A type; commas at this level separate function arguments, record fields or tuple elements",
 			"patterns": [
 				{
-					"comment": "where clause: method requirements on type variables",
-					"begin": "\\b(where)\\s*(\\[)",
-					"end": "\\]",
-					"beginCaptures": {
-						"1": {
-							"name": "keyword.control.roc"
-						},
-						"2": {
-							"name": "punctuation.brackets.square.roc"
-						}
-					},
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.brackets.square.roc"
-						}
-					},
-					"patterns": [
-						{
-							"comment": "where-clause method requirement",
-							"match": "\\b([a-z_][A-Za-z0-9_]*)(\\.)([a-z_][A-Za-z0-9_]*)(?=\\s+:\\s)",
-							"captures": {
-								"1": {
-									"name": "storage.type.parameter.roc"
-								},
-								"2": {
-									"name": "keyword.operator.accessor.roc"
-								},
-								"3": {
-									"name": "entity.name.function.roc"
-								}
-							}
-						},
-						{
-							"include": "#type-expression"
-						}
-					]
+					"include": "#type-atoms"
 				},
 				{
-					"name": "keyword.control.roc",
-					"match": "\\bwhere\\b"
-				},
-				{
-					"match": "(:(?<=\\s:)[:=]?(?=\\s|$))|(->|=>|\\.\\.)",
-					"captures": {
-						"1": {
-							"name": "punctuation.colon.roc"
-						},
-						"2": {
-							"name": "keyword.operator.roc"
-						}
-					}
-				},
-				{
-					"name": "storage.type.inferred.roc",
-					"match": "\\b_\\b"
-				},
-				{
-					"name": "variable.other.member.roc",
-					"match": "\\b[a-z_][A-Za-z0-9_]*(?=\\s+:\\s)"
-				},
-				{
-					"include": "#comments"
-				},
-				{
-					"include": "#tag-union-type"
-				},
-				{
-					"begin": "\\{",
-					"end": "\\}",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.brackets.curly.roc"
-						}
-					},
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.brackets.curly.roc"
-						}
-					},
-					"patterns": [
-						{
-							"include": "#type-expression"
-						}
-					]
-				},
-				{
-					"begin": "\\(",
-					"end": "\\)",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.brackets.round.roc"
-						}
-					},
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.brackets.round.roc"
-						}
-					},
-					"patterns": [
-						{
-							"include": "#type-expression"
-						}
-					]
-				},
-				{
-					"comment": "Module qualifier of a type",
-					"match": "\\b([A-Z][A-Za-z0-9_]*)(\\.)(?=[A-Z])",
-					"captures": {
-						"1": {
-							"name": "storage.type.roc"
-						},
-						"2": {
-							"name": "keyword.operator.accessor.roc"
-						}
-					}
-				},
-				{
-					"match": "\\b(?:((?:Bool|Box|Dec|Decode|Dict|Encode|Hash|Inspect|Int|List|Num|Result|Set|Str|F32|F64|[IU](?:8|16|32|64|128)))|([A-Z][A-Za-z0-9_]*))\\b",
-					"captures": {
-						"1": {
-							"name": "storage.type.builtin.roc"
-						},
-						"2": {
-							"name": "storage.type.roc"
-						}
-					}
-				},
-				{
-					"name": "storage.type.parameter.roc",
-					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+					"name": "punctuation.comma.type.roc",
+					"match": ","
 				},
 				{
 					"include": "#punctuation"
@@ -852,12 +728,12 @@
 			"end": "\\]",
 			"beginCaptures": {
 				"0": {
-					"name": "punctuation.brackets.square.roc"
+					"name": "punctuation.brackets.square.type.roc"
 				}
 			},
 			"endCaptures": {
 				"0": {
-					"name": "punctuation.brackets.square.roc"
+					"name": "punctuation.brackets.square.type.roc"
 				}
 			},
 			"patterns": [
@@ -868,6 +744,7 @@
 					"include": "#tag-union-type"
 				},
 				{
+					"comment": "Tag payload",
 					"begin": "\\(",
 					"end": "\\)",
 					"beginCaptures": {
@@ -882,7 +759,10 @@
 					},
 					"patterns": [
 						{
-							"include": "#type-expression"
+							"include": "#type-atoms"
+						},
+						{
+							"include": "#punctuation"
 						}
 					]
 				},
@@ -891,12 +771,12 @@
 					"end": "\\}",
 					"beginCaptures": {
 						"0": {
-							"name": "punctuation.brackets.curly.roc"
+							"name": "punctuation.brackets.curly.type.roc"
 						}
 					},
 					"endCaptures": {
 						"0": {
-							"name": "punctuation.brackets.curly.roc"
+							"name": "punctuation.brackets.curly.type.roc"
 						}
 					},
 					"patterns": [
@@ -922,7 +802,10 @@
 					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
 				},
 				{
-					"include": "#type-expression"
+					"include": "#type-atoms"
+				},
+				{
+					"include": "#punctuation"
 				}
 			],
 			"comment": "Tag union type: tags are variants, payloads are types"
@@ -1068,6 +951,167 @@
 							"name": "variable.parameter.roc"
 						}
 					}
+				}
+			]
+		},
+		"type-atoms": {
+			"patterns": [
+				{
+					"comment": "where clause: method requirements on type variables",
+					"begin": "\\b(where)\\s*(\\[)",
+					"end": "\\]",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						},
+						"2": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"patterns": [
+						{
+							"comment": "where-clause method requirement",
+							"match": "\\b([a-z_][A-Za-z0-9_]*)(\\.)([a-z_][A-Za-z0-9_]*)(?=\\s+:\\s)",
+							"captures": {
+								"1": {
+									"name": "storage.type.parameter.roc"
+								},
+								"2": {
+									"name": "keyword.operator.accessor.roc"
+								},
+								"3": {
+									"name": "entity.name.function.roc"
+								}
+							}
+						},
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"name": "keyword.control.roc",
+					"match": "\\bwhere\\b"
+				},
+				{
+					"match": "(:(?<=\\s:)[:=]?(?=\\s|$))|(->|=>|\\.\\.)",
+					"captures": {
+						"1": {
+							"name": "punctuation.colon.roc"
+						},
+						"2": {
+							"name": "keyword.operator.roc"
+						}
+					}
+				},
+				{
+					"name": "storage.type.inferred.roc",
+					"match": "\\b_\\b"
+				},
+				{
+					"name": "variable.other.member.type.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*(?=\\s+:\\s)"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#tag-union-type"
+				},
+				{
+					"comment": "Record type",
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.type.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.type.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Parenthesized or tuple type",
+					"begin": "\\((?<![A-Za-z0-9_]\\()",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.type.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.type.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Type application: arguments are separated by ordinary commas",
+					"begin": "\\(",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-atoms"
+						},
+						{
+							"include": "#punctuation"
+						}
+					]
+				},
+				{
+					"comment": "Module qualifier of a type",
+					"match": "\\b([A-Z][A-Za-z0-9_]*)(\\.)(?=[A-Z])",
+					"captures": {
+						"1": {
+							"name": "storage.type.roc"
+						},
+						"2": {
+							"name": "keyword.operator.accessor.roc"
+						}
+					}
+				},
+				{
+					"match": "\\b(?:((?:Bool|Box|Dec|Decode|Dict|Encode|Hash|Inspect|Int|List|Num|Result|Set|Str|F32|F64|[IU](?:8|16|32|64|128)))|([A-Z][A-Za-z0-9_]*))\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.builtin.roc"
+						},
+						"2": {
+							"name": "storage.type.roc"
+						}
+					}
+				},
+				{
+					"name": "storage.type.parameter.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
 				}
 			]
 		}

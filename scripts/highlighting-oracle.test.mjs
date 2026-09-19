@@ -28,6 +28,10 @@ test("normalizes raw tree-sitter captures and TextMate scopes", () => {
 	assert.equal(normalizeTextMateScope("entity.name.function.method.roc"), "function.method");
 	assert.equal(normalizeTextMateScope("comment.line.documentation.roc"), "comment.documentation");
 	assert.equal(normalizeTextMateScope("storage.type.inferred.roc"), "type.inferred");
+	assert.equal(normalizeTextMateScope("punctuation.brackets.curly.type.roc"), "punctuation.bracket.in-typedef");
+	assert.equal(normalizeTextMateScope("punctuation.brackets.curly.roc"), "punctuation.bracket");
+	assert.equal(normalizeTextMateScope("punctuation.comma.type.roc"), "punctuation.delimiter.in-typedef");
+	assert.equal(normalizeTextMateScope("variable.other.member.type.roc"), "variable.other.member.in-typedef");
 });
 
 test("validates the vendored oracle manifest", () => {

@@ -2,7 +2,7 @@
 
 Counter := { count : U64 }.{
 # <------- entity.name.type.definition.roc
-#            ^^^^^ variable.other.member.roc
+#            ^^^^^ variable.other.member.type.roc
 #                    ^^^ storage.type.builtin.roc
 
     increment : Counter -> Counter
