@@ -48,7 +48,7 @@ export function loadCorpus({ corpus = "feature", stressBlocks = 1000, project = 
 	throw new Error(`unknown corpus: ${corpus}`);
 }
 
-async function loadGrammar(instrument = false) {
+async function loadGrammar(instrument = false, rawGrammar = null) {
 	const scanners = [];
 	const wasm = readFileSync(path.join(vendor, "vscode-oniguruma.wasm"));
 	await loadWASM(wasm.buffer.slice(wasm.byteOffset, wasm.byteOffset + wasm.byteLength));
@@ -71,7 +71,7 @@ async function loadGrammar(instrument = false) {
 				}
 			} };
 		},
-	}) , loadGrammar: async (scope) => scope === "source.roc" ? parseRawGrammar(readFileSync(grammarPath, "utf8"), grammarPath) : null });
+	}) , loadGrammar: async (scope) => scope === "source.roc" ? parseRawGrammar(rawGrammar ? JSON.stringify(rawGrammar) : readFileSync(grammarPath, "utf8"), grammarPath) : null });
 	return { grammar: await registry.loadGrammar("source.roc"), scanners };
 }
 
@@ -79,6 +79,16 @@ function tokenizeFull(grammar, text, lineTimings = null, lineTimeLimitMs = 0) {
 	let stack = INITIAL;
 	let tokens = 0;
 	for (const [lineNumber, line] of text.split("\n").entries()) { const before = performance.now(); const result = grammar.tokenizeLine2(line, stack); const elapsed = performance.now() - before; stack = result.ruleStack; tokens += result.tokens.length / 2; if (lineTimings) lineTimings.push({ line: lineNumber + 1, bytes: Buffer.byteLength(line), utf16Length: line.length, timeMs: round(elapsed), overTimeLimit: lineTimeLimitMs > 0 && elapsed > lineTimeLimitMs }); }
+	return tokens;
+}
+
+// tokenizeLine2 merges adjacent tokens with identical theme metadata, so its
+// token array undercounts badly without a theme. Count real scope tokens in an
+// untimed pass instead.
+function countTokens(grammar, text) {
+	let stack = INITIAL;
+	let tokens = 0;
+	for (const line of text.split("\n")) { const result = grammar.tokenizeLine(line, stack); stack = result.ruleStack; tokens += result.tokens.length; }
 	return tokens;
 }
 
@@ -134,9 +144,11 @@ export async function benchmark(options = {}) {
 	const perFile = entries.map((item) => {
 		const lineTimings = [];
 		const before = performance.now();
-		const tokenCount = tokenizeFull(grammar, item.text, lineTimings, lineTimeLimitMs);
+		tokenizeFull(grammar, item.text, lineTimings, lineTimeLimitMs);
 		const timeMs = performance.now() - before;
-		return { name: item.name, bytes: item.bytes, lines: item.lines, tokenCount, tokenizerCalls: item.text.split("\n").length, timeMs: round(timeMs), mibPerSecond: round(item.bytes / 1048576 / (timeMs / 1000)), linesPerSecond: round(item.lines / (timeMs / 1000)), nsPerByte: round(timeMs * 1e6 / Math.max(1, item.bytes)), linesOverTimeLimit: lineTimings.filter((line) => line.overTimeLimit).length, lineTimings, slowLines: [...lineTimings].sort((a, b) => b.timeMs - a.timeMs).slice(0, 10) };
+		const tokenCount = countTokens(grammar, item.text);
+		const repeated = measure(iterations, () => tokenizeFull(grammar, item.text));
+		return { name: item.name, bytes: item.bytes, lines: item.lines, tokenCount, tokenizerCalls: item.text.split("\n").length, timeMs: round(timeMs), minMs: repeated.minMs, medianMs: repeated.medianMs, mibPerSecond: round(item.bytes / 1048576 / (timeMs / 1000)), linesPerSecond: round(item.lines / (timeMs / 1000)), nsPerByte: round(timeMs * 1e6 / Math.max(1, item.bytes)), linesOverTimeLimit: lineTimings.filter((line) => line.overTimeLimit).length, lineTimings, slowLines: [...lineTimings].sort((a, b) => b.timeMs - a.timeMs).slice(0, 10) };
 	});
 	const full = measure(iterations, () => entries.reduce((sum, item) => sum + tokenizeFull(grammar, item.text), 0));
 	const totalBytes = entries.reduce((sum, item) => sum + item.bytes, 0);
@@ -156,7 +168,7 @@ export async function benchmark(options = {}) {
 	const afterMemory = process.memoryUsage();
 	return {
 		schemaVersion: 1, kind: "roc-textmate-benchmark", createdAt: new Date().toISOString(),
-			environment: environmentMetadata(), runtime: { vscodeTextmate: "9.3.2", vscodeOniguruma: "2.0.1" }, grammar: { path: "syntaxes/roc.tmLanguage.json", sha256: createHash("sha256").update(readFileSync(grammarPath)).digest("hex") },
+			environment: environmentMetadata(), runtime: { vscodeTextmate: "9.3.2", vscodeOniguruma: "2.0.1" }, grammar: { path: "syntaxes/roc.tmLanguage.json", ...grammarStats(), sha256: createHash("sha256").update(readFileSync(grammarPath)).digest("hex") },
 		corpus: corpusMetadata(entries), configuration: { iterations, corpus: options.corpus ?? "feature", stressBlocks: options.stressBlocks ?? 1000, lineTimeLimitMs },
 			metrics: { coldLoadMs, warmFullDocument: full, perLineColdState: perLine, incrementalSingleLine: { ...incremental, linesInvalidated: countStats(incrementalInvalidated) }, perFile, totals: { tokenizerCalls: perFile.reduce((sum, item) => sum + item.tokenizerCalls, 0), tokenCount: perFile.reduce((sum, item) => sum + item.tokenCount, 0) }, memory: { rssBefore: beforeMemory.rss, rssAfter: afterMemory.rss, rssDelta: afterMemory.rss - beforeMemory.rss, heapUsedDelta: afterMemory.heapUsed - beforeMemory.heapUsed } },
 	};
@@ -170,8 +182,83 @@ export async function diagnose(options = {}) {
 	return { schemaVersion: 1, kind: "roc-textmate-diagnostic", createdAt: new Date().toISOString(), environment: environmentMetadata(), corpus: corpusMetadata(entries), elapsedMs: round(performance.now() - started), attribution: "Scanner call timings aggregate all patterns in a compiled Oniguruma scanner; match indexes identify the selected pattern but elapsed calls do not identify an individual regular expression.", scanners: scanners.map((item) => ({ ...item, timeMs: round(item.timeMs) })).sort((a, b) => b.timeMs - a.timeMs) };
 }
 
+function readGrammar() { return JSON.parse(readFileSync(grammarPath, "utf8")); }
+
+function walkRules(rule, location, visit) {
+	visit(rule, location);
+	for (const [index, child] of (rule.patterns ?? []).entries()) walkRules(child, `${location}.patterns[${index}]`, visit);
+	for (const [key, child] of Object.entries(rule.repository ?? {})) walkRules(child, `${location === "grammar" ? "" : `${location}.`}#${key}`, visit);
+}
+
+// Static checks for the regex shapes that the laboratory has shown to be
+// expensive. Every regex in a scanner is searched from each token position, so
+// cost grows with regex count, and a regex that cannot fail fast is paid for
+// on every token of a line.
+export function lintGrammar(grammar = readGrammar()) {
+	const findings = [];
+	let regexCount = 0;
+	walkRules(grammar, "grammar", (rule, location) => {
+		for (const key of ["match", "begin", "end", "while"]) {
+			const regex = rule[key];
+			if (typeof regex !== "string") continue;
+			regexCount += 1;
+			if (/\(\?<[=!](?:[^()]|\([^()]*\))*[*+]/.test(regex)) findings.push({ severity: "error", code: "variable-length-lookbehind", location: `${location}.${key}`, regex, advice: "Anchor the rule and consume the prefix with captures instead; this shape re-scans backwards at every candidate position." });
+			else if (key !== "end" && /^\(\?<[=!]/.test(regex)) findings.push({ severity: "warning", code: "leading-lookbehind", location: `${location}.${key}`, regex, advice: "Start with a literal or character class and check the lookbehind after it so Oniguruma can skip ahead quickly." });
+			if (!regex.startsWith("^") && /\(\?[=!][^)]*\.\*/.test(regex)) findings.push({ severity: "warning", code: "unanchored-line-scan", location: `${location}.${key}`, regex, advice: "A .* lookahead scans to the end of the line from every candidate; anchor the rule with ^ or bound the lookahead." });
+		}
+		const byName = new Map();
+		for (const child of rule.patterns ?? []) if (child.match && child.name && !child.captures) byName.set(child.name, (byName.get(child.name) ?? 0) + 1);
+		for (const [name, count] of byName) if (count > 1) findings.push({ severity: "warning", code: "mergeable-siblings", location, regex: null, advice: `${count} sibling match rules share the scope ${name}; merge them into one alternation to cut per-token scanner work.` });
+	});
+	const expand = (patterns, seen = new Set()) => (patterns ?? []).reduce((sum, pattern) => {
+		if (!pattern.include) return sum + 1;
+		const key = pattern.include.replace(/^#/, "");
+		if (!pattern.include.startsWith("#") || seen.has(key)) return sum;
+		const target = grammar.repository?.[key];
+		if (!target) return sum;
+		return sum + (target.match || target.begin ? 1 : expand(target.patterns, new Set([...seen, key])));
+	}, 0);
+	return { schemaVersion: 1, kind: "roc-textmate-lint", regexCount, topLevelScannerPatterns: expand(grammar.patterns), findings };
+}
+
+function grammarStats() {
+	const { regexCount, topLevelScannerPatterns, findings } = lintGrammar();
+	return { regexCount, topLevelScannerPatterns, lintFindings: findings.length };
+}
+
+function describePattern(pattern, index) {
+	return pattern.include ?? pattern.comment ?? pattern.name ?? pattern.match ?? pattern.begin ?? `patterns[${index}]`;
+}
+
+// Remove one pattern at a time from the top level (or from one repository
+// rule) and re-measure. Unlike scanner diagnostics, this attributes cost to an
+// individual rule. A negative delta means removing the rule saved time.
+export async function ablate(options = {}) {
+	const iterations = options.iterations ?? 7;
+	const entries = loadCorpus({ ...options, corpus: options.corpus ?? "stress" });
+	const original = readGrammar();
+	const container = (grammar) => options.rule ? grammar.repository?.[options.rule] : grammar;
+	if (!Array.isArray(container(original)?.patterns)) throw new Error(`${options.rule ? `#${options.rule}` : "the grammar"} has no patterns array to ablate`);
+	const time = async (rawGrammar) => {
+		const { grammar } = await loadGrammar(false, rawGrammar);
+		for (const item of entries) tokenizeFull(grammar, item.text);
+		const perFile = Object.fromEntries(entries.map((item) => [item.name, measure(iterations, () => tokenizeFull(grammar, item.text)).minMs]));
+		return { totalMs: round(Object.values(perFile).reduce((a, b) => a + b, 0)), perFile };
+	};
+	const baseline = await time(original);
+	const rows = [];
+	for (const [index, pattern] of container(original).patterns.entries()) {
+		const variant = structuredClone(original);
+		container(variant).patterns.splice(index, 1);
+		const result = await time(variant);
+		rows.push({ removed: describePattern(pattern, index), totalMs: result.totalMs, deltaMs: round(result.totalMs - baseline.totalMs), percent: round(((result.totalMs - baseline.totalMs) / baseline.totalMs) * 100), perFileDeltaMs: Object.fromEntries(Object.entries(result.perFile).map(([name, value]) => [name, round(value - baseline.perFile[name])])) });
+	}
+	rows.sort((left, right) => left.deltaMs - right.deltaMs);
+	return { schemaVersion: 1, kind: "roc-textmate-ablation", createdAt: new Date().toISOString(), environment: environmentMetadata(), corpus: corpusMetadata(entries), configuration: { iterations, corpus: options.corpus ?? "stress", rule: options.rule ?? null, statistic: "min" }, baseline, rows };
+}
+
 export function compareReports(base, current) {
-	const names = ["coldLoadMs", "warmFullDocument.medianMs", "warmFullDocument.p95Ms", "perLineColdState.medianMs", "incrementalSingleLine.medianMs", "memory.rssDelta"];
+	const names = ["coldLoadMs", "warmFullDocument.minMs", "warmFullDocument.medianMs", "warmFullDocument.p95Ms", "perLineColdState.medianMs", "incrementalSingleLine.medianMs", "memory.rssDelta"];
 	const read = (object, name) => name.split(".").reduce((value, key) => value?.[key], object.metrics);
 	const baseLines = new Map(base.metrics.perFile.flatMap((file) => file.lineTimings.map((line) => [`${file.name}:${line.line}`, { ...line, file: file.name }])));
 	const lineRegressions = current.metrics.perFile.flatMap((file) => file.lineTimings.map((line) => {
@@ -179,11 +266,18 @@ export function compareReports(base, current) {
 		if (!before) return null;
 		return { file: file.name, line: line.line, utf16Length: line.utf16Length, beforeMs: before.timeMs, afterMs: line.timeMs, deltaMs: round(line.timeMs - before.timeMs), percent: before.timeMs === 0 ? null : round(((line.timeMs - before.timeMs) / before.timeMs) * 100) };
 	})).filter(Boolean).sort((left, right) => right.deltaMs - left.deltaMs).slice(0, 20);
-	return { schemaVersion: 1, kind: "roc-textmate-comparison", compatibleCorpus: base.corpus.sha256 === current.corpus.sha256, base: base.createdAt, current: current.createdAt, changes: names.map((name) => { const before = read(base, name); const after = read(current, name); return { metric: name, before, after, delta: after - before, percent: before === 0 ? null : round(((after - before) / before) * 100) }; }), incrementalLinesInvalidated: { baseMax: base.metrics.incrementalSingleLine.linesInvalidated.max, currentMax: current.metrics.incrementalSingleLine.linesInvalidated.max }, lineRegressions };
+	const baseFiles = new Map(base.metrics.perFile.map((file) => [file.name, file]));
+	const fileTime = (file) => file.minMs ?? file.timeMs;
+	const perFile = current.metrics.perFile.filter((file) => baseFiles.has(file.name)).map((file) => { const before = fileTime(baseFiles.get(file.name)); const after = fileTime(file); return { name: file.name, beforeMs: before, afterMs: after, deltaMs: round(after - before), percent: before === 0 ? null : round(((after - before) / before) * 100) }; }).sort((left, right) => right.deltaMs - left.deltaMs);
+	const spread = (report) => { const full = report.metrics.warmFullDocument; return full.medianMs === 0 ? 0 : round(((full.p95Ms - full.minMs) / full.medianMs) * 100); };
+	const noisePercent = Math.max(spread(base), spread(current));
+	return { schemaVersion: 1, kind: "roc-textmate-comparison", noisePercent, perFile, compatibleCorpus: base.corpus.sha256 === current.corpus.sha256, base: base.createdAt, current: current.createdAt, changes: names.map((name) => { const before = read(base, name); const after = read(current, name); const percent = before === 0 ? null : round(((after - before) / before) * 100); return { metric: name, before, after, delta: after - before, percent, withinNoise: name.startsWith("memory") || percent === null ? null : Math.abs(percent) <= noisePercent }; }), incrementalLinesInvalidated: { baseMax: base.metrics.incrementalSingleLine.linesInvalidated.max, currentMax: current.metrics.incrementalSingleLine.linesInvalidated.max }, lineRegressions };
 }
 
 export function markdownReport(report) {
-	if (report.kind === "roc-textmate-comparison") return `# Roc TextMate benchmark comparison\n\nCorpus compatible: **${report.compatibleCorpus ? "yes" : "no"}**\n\n| Metric | Before | After | Change |\n|---|---:|---:|---:|\n${report.changes.map((x) => `| ${x.metric} | ${x.before} | ${x.after} | ${x.percent === null ? "n/a" : `${x.percent}%`} |`).join("\n")}\n\nMaximum incremental lines rescanned: ${report.incrementalLinesInvalidated.baseMax} → ${report.incrementalLinesInvalidated.currentMax}.\n\n## Slowest line regressions\n\n| Location | Before (ms) | After (ms) | Change | UTF-16 length |\n|---|---:|---:|---:|---:|\n${report.lineRegressions.slice(0, 10).map((line) => `| ${line.file}:${line.line} | ${line.beforeMs} | ${line.afterMs} | ${line.percent === null ? "n/a" : `${line.percent}%`} | ${line.utf16Length} |`).join("\n")}\n`;
+	if (report.kind === "roc-textmate-comparison") return `# Roc TextMate benchmark comparison\n\nCorpus compatible: **${report.compatibleCorpus ? "yes" : "no"}**\n\nRun-to-run spread: **${report.noisePercent}%** of the median; smaller changes are marked as noise. Prefer the min rows on a busy machine.\n\n| Metric | Before | After | Change |\n|---|---:|---:|---:|\n${report.changes.map((x) => `| ${x.metric} | ${x.before} | ${x.after} | ${x.percent === null ? "n/a" : `${x.percent}%${x.withinNoise ? " (noise)" : ""}`} |`).join("\n")}\n\n## Per file (min ms)\n\n| File | Before | After | Change |\n|---|---:|---:|---:|\n${report.perFile.slice(0, 15).map((x) => `| ${x.name} | ${x.beforeMs} | ${x.afterMs} | ${x.percent === null ? "n/a" : `${x.percent}%`} |`).join("\n")}\n\nMaximum incremental lines rescanned: ${report.incrementalLinesInvalidated.baseMax} → ${report.incrementalLinesInvalidated.currentMax}.\n\n## Slowest line regressions\n\n| Location | Before (ms) | After (ms) | Change | UTF-16 length |\n|---|---:|---:|---:|---:|\n${report.lineRegressions.slice(0, 10).map((line) => `| ${line.file}:${line.line} | ${line.beforeMs} | ${line.afterMs} | ${line.percent === null ? "n/a" : `${line.percent}%`} | ${line.utf16Length} |`).join("\n")}\n`;
+	if (report.kind === "roc-textmate-ablation") return `# Roc TextMate rule ablation\n\nEach row removes one pattern from ${report.configuration.rule ? `#${report.configuration.rule}` : "the top level"} and re-measures the ${report.configuration.corpus} corpus (min of ${report.configuration.iterations}). Negative change is the cost of keeping that rule. Baseline: **${report.baseline.totalMs} ms**.\n\n| Removed | Total (ms) | Change (ms) | Change | Most affected file |\n|---|---:|---:|---:|---|\n${report.rows.map((x) => { const [file, delta] = Object.entries(x.perFileDeltaMs).sort((l, r) => Math.abs(r[1]) - Math.abs(l[1]))[0] ?? ["", 0]; return `| \`${String(x.removed).replaceAll("|", "\\|").slice(0, 60)}\` | ${x.totalMs} | ${x.deltaMs} | ${x.percent}% | ${file} (${delta}) |`; }).join("\n")}\n`;
+	if (report.kind === "roc-textmate-lint") return `# Roc TextMate grammar lint\n\n- Regexes: ${report.regexCount}\n- Top-level scanner patterns: ${report.topLevelScannerPatterns}\n- Findings: ${report.findings.length}\n${report.findings.map((x) => `\n## ${x.severity}: ${x.code}\n\n- Location: \`${x.location}\`${x.regex ? `\n- Regex: \`${x.regex}\`` : ""}\n- ${x.advice}`).join("\n")}\n`;
 	if (report.kind === "roc-textmate-diagnostic") return `# Roc TextMate scanner diagnostics\n\n${report.attribution}\n\n| Scanner | Patterns | Calls | Time (ms) |\n|---:|---:|---:|---:|\n${report.scanners.slice(0, 30).map((x) => `| ${x.scanner} | ${x.patterns.length} | ${x.calls} | ${x.timeMs} |`).join("\n")}\n`;
 	return `# Roc TextMate benchmark\n\n- Corpus: ${report.corpus.files} files, ${report.corpus.lines} lines (${report.corpus.sha256})\n- Environment: Node ${report.environment.node}, ${report.environment.platform}/${report.environment.arch}\n- Cold grammar load: ${report.metrics.coldLoadMs} ms\n\n| Mode | Median (ms) | p95 (ms) |\n|---|---:|---:|\n| Warm full document | ${report.metrics.warmFullDocument.medianMs} | ${report.metrics.warmFullDocument.p95Ms} |\n| Per-line cold state | ${report.metrics.perLineColdState.medianMs} | ${report.metrics.perLineColdState.p95Ms} |\n| Incremental single line | ${report.metrics.incrementalSingleLine.medianMs} | ${report.metrics.incrementalSingleLine.p95Ms} |\n\nRSS delta: ${report.metrics.memory.rssDelta} bytes.\n`;
 }

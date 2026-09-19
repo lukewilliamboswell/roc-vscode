@@ -2,7 +2,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { benchmark, compareReports, diagnose, markdownReport, readReport, repositoryRoot, writeReport } from "./grammar-bench-lib.mjs";
+import { ablate, benchmark, compareReports, diagnose, lintGrammar, markdownReport, readReport, repositoryRoot, writeReport } from "./grammar-bench-lib.mjs";
 
 function parse(args) {
 	const options = { command: "bench" };
@@ -17,15 +17,24 @@ function parse(args) {
 		else if (arg === "--output") options.output = args[++i];
 		else if (arg === "--name") options.name = args[++i];
 		else if (arg === "--tool") options.tool = args[++i];
+		else if (arg === "--rule") options.rule = args[++i].replace(/^#/, "");
+		else if (arg === "--json") options.json = true;
+		else if (arg === "--strict") options.strict = true;
 		else options.files = [...(options.files ?? []), arg];
 	}
 	return options;
 }
 const options = parse(process.argv.slice(2));
-const emit = (report) => options.output ? writeReport(report, path.resolve(options.output)) : console.log(options.command === "report" ? markdownReport(report) : JSON.stringify(report, null, 2));
+const emit = (report) => options.output ? writeReport(report, path.resolve(options.output)) : console.log(!options.json && ["report", "compare", "ablate", "lint"].includes(options.command) ? markdownReport(report) : JSON.stringify(report, null, 2));
 
 if (options.command === "bench") emit(await benchmark(options));
 else if (options.command === "diagnose") emit(await diagnose(options));
+else if (options.command === "ablate") emit(await ablate(options));
+else if (options.command === "lint") {
+	const report = lintGrammar();
+	emit(report);
+	if (report.findings.some(({ severity }) => severity === "error") || (options.strict && report.findings.length > 0)) process.exitCode = 1;
+}
 else if (options.command === "save") {
 	const report = await benchmark(options); const target = path.join(repositoryRoot, "benchmarks", "baselines", `${options.name ?? "local"}.json`); writeReport(report, target); console.log(target);
 } else if (options.command === "report") emit(readReport(options.files?.[0]));

@@ -93,8 +93,17 @@ grammar-bench-compare BASE CURRENT *ARGS:
 grammar-diagnose *ARGS:
     node scripts/grammar-bench.mjs diagnose {{ ARGS }}
 
+# Remove one rule at a time and re-measure, to attribute cost to a rule.
+grammar-ablate *ARGS:
+    node scripts/grammar-bench.mjs ablate {{ ARGS }}
+
+# Statically check the grammar for regex shapes known to be slow.
+grammar-lint *ARGS:
+    node scripts/grammar-bench.mjs lint {{ ARGS }}
+
 grammar-profile *ARGS:
     node scripts/grammar-bench.mjs profile {{ ARGS }}
 
 grammar-bench-test:
+    node scripts/grammar-bench.mjs lint --json > /dev/null
     node --test scripts/grammar-bench-corpus.test.mjs scripts/grammar-bench.test.mjs

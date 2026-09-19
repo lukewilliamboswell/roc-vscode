@@ -12,6 +12,14 @@ Add ordinary grammar fixtures under `syntaxes/tests/`. A new test should fail be
 
 Skipped fixtures are visible technical debt, not an alternative assertion mode. After implementing support, remove the fixture's manifest entry; the fixture itself does not need to change. The local runner validates the manifest and always reports the number of known unsupported tests skipped.
 
+Before running the upstream tool, the local runner rejects assertion mistakes that `textmate-grammar-test` accepts silently:
+
+- **Drifted ranges.** A range that cuts through a word at one edge only has usually slid sideways, which is easy to do on tab-indented lines. A range wholly inside a word is treated as deliberate.
+- **Ignored arrows.** `# <--` is only an assertion when the `#` is in column one. An indented arrow line is parsed as source and asserts nothing, so use carets for indented code.
+- **Empty arrows.** An arrow covers one column per `-`, starting after one column per `~`. The `<` covers nothing, so `# <~~` is an empty range and `# <-----` covers five columns, not six.
+
+Assertions match scope names exactly: `keyword.control.roc` does not satisfy `keyword.control.import.roc` or the reverse.
+
 ## Grammar performance laboratory
 
 The repository-owned benchmark uses the vendored `vscode-textmate` and
@@ -35,6 +43,44 @@ just grammar-bench-save after --corpus stress
 just grammar-bench-compare benchmarks/baselines/before.json benchmarks/baselines/after.json --output comparison.md
 just grammar-bench-report benchmarks/baselines/after.json --output after.md
 ```
+
+`compare` prints Markdown (pass `--json` for the raw report). It lists per-file
+changes using the minimum of the repeated runs, and reports the run-to-run
+spread so that changes inside the noise floor are labelled as such. Token counts
+come from an untimed `tokenizeLine` pass, because `tokenizeLine2` merges adjacent
+tokens that share theme metadata and would otherwise report two or three tokens
+per line.
+
+### Finding the expensive rule
+
+```sh
+just grammar-lint
+just grammar-ablate
+just grammar-ablate --rule definitions --corpus stress
+```
+
+`just grammar-ablate` removes one top-level pattern at a time (or one pattern of
+a repository rule with `--rule`), re-measures, and sorts by the time saved. This
+is the quickest way to attribute a regression to a rule. Read it with care:
+removing a rule hands its text to later rules, so a large saving can be partly
+displacement, and removing a region rule such as `#strings` makes the document
+slower because its contents are then tokenized as code.
+
+`just grammar-lint` statically reports the shapes that measurements here have
+shown to matter, and `just grammar-bench-test` fails on its errors:
+
+- **Every regex costs something on every token.** All patterns in a scanner are
+  searched from each token position, so sibling rules with the same scope should
+  be one alternation, and rules differing only by scope should be one regex with
+  captures. Merging the original operator, punctuation and keyword lists took the
+  stress corpus from +45% to parity.
+- **Never use a variable-length lookbehind** such as `(?<=^\s*Name)\(`. It made
+  deeply nested input six times slower. Anchor the rule with `^` and consume the
+  prefix with captures instead.
+- **Prefer a literal or character class first.** `:(?<=\s:)` lets Oniguruma skip
+  ahead where `(?<=\s):` cannot.
+- **Keep `.*` lookaheads behind a `^` anchor** so they run once per line rather
+  than once per candidate.
 
 `just grammar-diagnose` instruments compiled Oniguruma scanner calls. It records
 pattern sets, match indexes, input sizes and slow failed calls, but does not
