@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix line comments: the toggle-comment command now inserts `#` rather than `//`.
+- Stop shipping the grammar test manifest inside the extension.
 - Add semantic TextMate scopes for functions, parameters, record members, namespaces, tag constructors, type definitions, headers and imports.
 
 ## v0.0.5

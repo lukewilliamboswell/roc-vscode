@@ -5,7 +5,7 @@
 !dist/
 
 # Textmate grammar
-!syntaxes/*.json
+!syntaxes/roc.tmLanguage.json
 
 # Logo
 !images/*.png
