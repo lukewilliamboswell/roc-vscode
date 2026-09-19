@@ -438,7 +438,7 @@
 		},
 		"annotations": {
 			"comment": "Type annotation: from a spaced colon to the end of the line",
-			"begin": "(?<=\\s)(?::=|::|:)(?=\\s|$)",
+			"begin": ":(?<=\\s:)[:=]?(?=\\s|$)",
 			"end": "$",
 			"beginCaptures": {
 				"0": {
@@ -462,7 +462,7 @@
 				},
 				{
 					"name": "keyword.operator.roc",
-					"match": "(?<=\\s)(?::=|::|:)(?=\\s|$)|->|=>|\\.\\."
+					"match": ":(?<=\\s:)[:=]?(?=\\s|$)|->|=>|\\.\\."
 				},
 				{
 					"name": "storage.type.inferred.roc",
@@ -769,23 +769,9 @@
 			"match": "\\b[a-z_][A-Za-z0-9_]*(?:!|(?=\\())"
 		},
 		"members": {
-			"patterns": [
-				{
-					"name": "variable.other.member.roc",
-					"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b",
-					"comment": "Field access"
-				},
-				{
-					"name": "variable.other.member.roc",
-					"match": "(?<=[{,]\\s|\\{)[a-z_][A-Za-z0-9_]*\\b(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*)*\\s*\\})",
-					"comment": "Record field shorthand"
-				},
-				{
-					"name": "variable.other.member.roc",
-					"match": "\\b[a-z_][A-Za-z0-9_]*(?=:(?!:))",
-					"comment": "Record field name"
-				}
-			]
+			"comment": "Field access, record field shorthand, or record field name",
+			"name": "variable.other.member.roc",
+			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b|(?<=[{,]\\s|\\{)[a-z_][A-Za-z0-9_]*\\b(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*)*\\s*\\})|\\b[a-z_][A-Za-z0-9_]*(?=:(?!:))"
 		},
 		"constructors": {
 			"name": "entity.name.type.constructor.roc",
