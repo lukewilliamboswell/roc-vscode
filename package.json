@@ -22,7 +22,7 @@
 	"description": "Language support for the Roc programming language",
 	"version": "0.0.5",
 	"engines": {
-		"vscode": "^1.75.0"
+		"vscode": "^1.82.0"
 	},
 	"categories": [
 		"Programming Languages"
