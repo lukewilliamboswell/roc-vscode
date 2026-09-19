@@ -230,7 +230,7 @@
 					"name": "punctuation.brackets.square.roc"
 				},
 				"7": {
-					"name": "punctuation.accessor.roc"
+					"name": "keyword.operator.accessor.roc"
 				}
 			}
 		},
@@ -301,11 +301,16 @@
 									"match": "\\bplatform\\b"
 								},
 								{
+									"comment": "The platform's package alias",
 									"name": "meta.package.roc",
+									"match": "[a-z_][A-Za-z0-9_]*(?=\\s*:\\s*platform\\b)"
+								},
+								{
+									"name": "variable.other.roc",
 									"match": "[a-z_][A-Za-z0-9_]*(?=\\s*:)"
 								},
 								{
-									"name": "meta.package.roc string.quoted.double.roc",
+									"name": "string.quoted.double.roc meta.package.roc",
 									"match": "\"[^\"]*\""
 								},
 								{
@@ -341,10 +346,10 @@
 							"name": "keyword.control.import.roc"
 						},
 						"2": {
-							"name": "entity.name.namespace.roc"
+							"name": "variable.other.roc"
 						},
 						"3": {
-							"name": "punctuation.accessor.roc"
+							"name": "keyword.operator.accessor.roc"
 						},
 						"4": {
 							"name": "entity.name.namespace.roc"
@@ -475,7 +480,7 @@
 			"end": "$",
 			"beginCaptures": {
 				"0": {
-					"name": "keyword.operator.roc"
+					"name": "punctuation.colon.roc"
 				}
 			},
 			"patterns": [
@@ -494,8 +499,15 @@
 					"match": "\\bwhere\\b"
 				},
 				{
-					"name": "keyword.operator.roc",
-					"match": ":(?<=\\s:)[:=]?(?=\\s|$)|->|=>|\\.\\."
+					"match": "(:(?<=\\s:)[:=]?(?=\\s|$))|(->|=>|\\.\\.)",
+					"captures": {
+						"1": {
+							"name": "punctuation.colon.roc"
+						},
+						"2": {
+							"name": "keyword.operator.roc"
+						}
+					}
 				},
 				{
 					"name": "storage.type.inferred.roc",
@@ -512,7 +524,7 @@
 							"name": "entity.name.namespace.builtin.roc"
 						},
 						"2": {
-							"name": "punctuation.accessor.roc"
+							"name": "keyword.operator.accessor.roc"
 						}
 					}
 				},
@@ -523,7 +535,7 @@
 							"name": "entity.name.namespace.roc"
 						},
 						"2": {
-							"name": "punctuation.accessor.roc"
+							"name": "keyword.operator.accessor.roc"
 						}
 					}
 				},
@@ -788,23 +800,40 @@
 							"name": "entity.name.namespace.roc"
 						},
 						"3": {
-							"name": "punctuation.accessor.roc"
+							"name": "keyword.operator.accessor.roc"
 						},
 						"4": {
-							"name": "entity.name.function.method.roc"
+							"name": "entity.name.function.roc"
 						}
 					}
 				}
 			]
 		},
 		"calls": {
-			"name": "entity.name.function.roc",
-			"match": "\\b[a-z_][A-Za-z0-9_]*(?:!|(?=\\())"
+			"patterns": [
+				{
+					"comment": "Method call on a value",
+					"match": "(\\.)([a-z_][A-Za-z0-9_]*!?)(?=\\()",
+					"captures": {
+						"1": {
+							"name": "keyword.operator.accessor.roc"
+						},
+						"2": {
+							"name": "entity.name.function.method.roc"
+						}
+					}
+				},
+				{
+					"comment": "Direct call or effectful function reference",
+					"name": "entity.name.function.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*(?:!(?!:)|(?=\\())"
+				}
+			]
 		},
 		"members": {
 			"comment": "Field access, record field shorthand, or record field name",
 			"name": "variable.other.member.roc",
-			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b|(?<=[{,]\\s|\\{)(?<!\\$\\{)[a-z_][A-Za-z0-9_]*\\b(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*)*\\s*\\})|\\b[a-z_][A-Za-z0-9_]*(?=:(?!:))"
+			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b|(?<=[{,]\\s|\\{)(?<!\\$\\{)[a-z_][A-Za-z0-9_]*\\b(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*)*\\s*\\})|\\b[a-z_][A-Za-z0-9_]*!?(?=:(?!:))"
 		},
 		"constructors": {
 			"name": "entity.name.type.constructor.roc",

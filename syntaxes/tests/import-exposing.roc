@@ -2,7 +2,7 @@
 
 import pf.HtmlAttributes exposing [class, Attribute]
 # <------ keyword.control.import.roc
-#      ^^ entity.name.namespace.roc
+#      ^^ variable.other.roc
 #         ^^^^^^^^^^^^^^ entity.name.namespace.roc
 #                        ^^^^^^^^ keyword.control.import.roc
 #                                  ^^^^^ meta.exposed.roc

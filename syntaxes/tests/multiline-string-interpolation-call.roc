@@ -2,4 +2,4 @@
 
 message =
     \\value: ${Str.inspect(value)}
-#                  ^^^^^^^ entity.name.function.method.roc
+#                  ^^^^^^^ entity.name.function.roc

@@ -5,5 +5,5 @@ import "../README.md" as readme : Str
 #      ^^^^^^^^^^^^^^ string.quoted.double.roc
 #                     ^^ keyword.control.roc
 #                        ^^^^^^ variable.other.roc
-#                               ^  keyword.operator.roc
+#                               ^  punctuation.colon.roc
 #                                 ^^^ storage.type.roc
