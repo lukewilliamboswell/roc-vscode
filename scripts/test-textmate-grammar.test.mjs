@@ -17,8 +17,8 @@ import {
 function repository(manifest = { version: 1, skips: [] }) {
 	const root = mkdtempSync(path.join(tmpdir(), "roc-vscode-textmate-"));
 	mkdirSync(path.join(root, "syntaxes/tests/unsupported"), { recursive: true });
-	writeFileSync(path.join(root, "syntaxes/tests/active.roc"), "# active\n");
-	writeFileSync(path.join(root, "syntaxes/tests/unsupported/known.roc"), "# skipped\n");
+	writeFileSync(path.join(root, "syntaxes/tests/active.roc"), '# SYNTAX TEST "source.roc" "probe"\nvalue = 1\n# <----- variable.other.roc\n');
+	writeFileSync(path.join(root, "syntaxes/tests/unsupported/known.roc"), '# SYNTAX TEST "source.roc" "probe"\nvalue = 1\n# <----- variable.other.roc\n');
 	writeFileSync(path.join(root, "syntaxes/skipped-tests.json"), JSON.stringify(manifest));
 	return root;
 }
@@ -81,7 +81,7 @@ test("fixture checks catch assertions the upstream tool accepts silently", () =>
 	assert.deepEqual(kinds("value = 1\n# <~~ variable.other.roc\n"), ["empty"]);
 	assert.deepEqual(kinds("import Foo\n# <------ keyword.control.roc\n#      ^^^ entity.name.namespace.roc\n"), []);
 	assert.deepEqual(kinds("    value = 1\n#     ^^ variable.other.roc\n"), [], "a range wholly inside a word is deliberate");
-	assert.deepEqual(kinds("# <- not an assertion, just a comment after the header\n").length, 0);
+	assert.deepEqual(kinds("value = 1\n# just a comment\n"), ["unasserted"]);
 });
 
 test("malformed fixtures fail the run before the upstream tool starts", () => {

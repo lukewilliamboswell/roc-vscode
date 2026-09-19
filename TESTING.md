@@ -18,6 +18,7 @@ Before running the upstream tool, the local runner rejects assertion mistakes th
 - **Indented arrows.** `# <--` always measures from column one of the source line, even when the comment is indented, so use carets for indented code.
 - **Empty arrows.** An arrow covers one column per `-`, starting after one column per `~`. The `<` covers nothing, so `# <~~` is an empty range and `# <-----` covers five columns, not six.
 
+- **Unasserted fixtures.** A fixture without a single assertion passes whatever the grammar does.
 - **State gaps.** The upstream tool only tokenizes source lines that carry assertions, passing tokenizer state from one asserted line straight to the next. An unasserted line that opens or closes a region, such as a lone `}` or a multiline string, is never seen. The runner compares that view with a full tokenization and fails where they diverge; assert on every line that opens or closes a region.
 
 Assertions match scope names exactly: `keyword.control.roc` does not satisfy `keyword.control.import.roc` or the reverse.
@@ -83,6 +84,10 @@ shown to matter, and `just grammar-bench-test` fails on its errors:
   ahead where `(?<=\s):` cannot.
 - **Keep `.*` lookaheads behind a `^` anchor** so they run once per line rather
   than once per candidate.
+- **Anchored rules are not free.** A `^` rule is still searched from every token
+  position, because Oniguruma looks ahead for a line start. Five anchored
+  branch-pattern and definition rules cost 11% on the stress corpus; merged into
+  two regexes with alternation and captures they cost nothing measurable.
 
 `just grammar-diagnose` instruments compiled Oniguruma scanner calls. It records
 pattern sets, match indexes, input sizes and slow failed calls, but does not

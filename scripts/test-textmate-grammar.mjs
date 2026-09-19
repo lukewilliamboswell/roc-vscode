@@ -80,17 +80,20 @@ const isWord = (character) => character !== undefined && /[A-Za-z0-9_]/.test(cha
 //   a word is a deliberate partial assertion and is allowed.
 // - "ignored": an indented `# <--` arrow still measures from column one of the
 //   source line, not from the comment, so it rarely covers what was intended.
+// - "unasserted": a fixture without any assertion always passes.
 // - "empty": an arrow covers one column per dash, starting after one column
 //   per tilde. The `<` itself covers nothing, so `# <~~` is an empty range.
 export function findFixtureProblems(text) {
 	const problems = [];
 	let source = null;
+	let assertions = 0;
 	for (const [index, line] of text.split("\n").entries()) {
 		const report = (kind, start, end) => problems.push({ kind, line: index + 1, start: start + 1, end: end + 1, text: source.slice(start, end) });
 		const arrow = /^(\s*)#\s*<(~*)(-*)(?=\s|$)/.exec(line);
 		const carets = /^\s*#\s*\^/.test(line);
 		if (index === 0 || (!arrow && !carets)) { source = line; continue; }
 		if (source === null) continue;
+		assertions += 1;
 		const ranges = [];
 		if (arrow && arrow[1].length > 0) report("ignored", 0, 0);
 		else if (arrow && arrow[3].length === 0) report("empty", arrow[2].length, arrow[2].length);
@@ -102,6 +105,7 @@ export function findFixtureProblems(text) {
 			if (splitsStart !== splitsEnd) report("drifted", start, end);
 		}
 	}
+	if (assertions === 0) problems.push({ kind: "unasserted", line: 1, start: 1, end: 1, text: "" });
 	return problems;
 }
 
@@ -180,6 +184,7 @@ export async function checkStateGaps({ repositoryRoot, stderr = process.stderr }
 const PROBLEM_MESSAGES = {
 	drifted: ({ start, end, text }) => `assertion columns ${start}-${end} cover "${text}", cutting through a word at one edge; the range has probably drifted or is one column short`,
 	ignored: () => "indented `# <` arrows still measure from column one, not from the comment; use carets for indented code",
+	unasserted: () => "fixture has no assertions, so it passes whatever the grammar does",
 	empty: () => "arrow assertion has no dashes, so it covers nothing; each dash covers one column",
 };
 
