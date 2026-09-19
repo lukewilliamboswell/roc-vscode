@@ -11,7 +11,6 @@ app [main!] {
 
     json: "https://example.com/json.tar.br",
 #   ^^^^ variable.other.roc
-#         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.package.roc
 #         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double.roc
 
 }

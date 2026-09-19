@@ -27,6 +27,9 @@
 			"include": "#match-patterns"
 		},
 		{
+			"include": "#numbers"
+		},
+		{
 			"include": "#operators"
 		},
 		{
@@ -43,9 +46,6 @@
 		},
 		{
 			"include": "#variables"
-		},
-		{
-			"include": "#numbers"
 		},
 		{
 			"include": "#constructors"
@@ -67,6 +67,9 @@
 					"include": "#keywords"
 				},
 				{
+					"include": "#numbers"
+				},
+				{
 					"include": "#operators"
 				},
 				{
@@ -83,9 +86,6 @@
 				},
 				{
 					"include": "#variables"
-				},
-				{
-					"include": "#numbers"
 				},
 				{
 					"include": "#constructors"
@@ -110,7 +110,8 @@
 			"match": "\\\\(?:[\\\\\\\"'nrt$]|u\\([0-9a-fA-F]{1,8}\\))"
 		},
 		"numbers": {
-			"match": "\\b(?:(?<!\\.)([0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?(?:\\.(?:F32|F64|Dec))?|[0-9][0-9_]*[eE][-+]?[0-9]+|[0-9][0-9_]*\\.(?:F32|F64|Dec))|(0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*(?:\\.(?:U8|I8|U16|I16|U32|I32|U64|I64|U128|I128))?))",
+			"comment": "A minus sign directly before a digit, and not directly after a value, is part of the literal",
+			"match": "((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?<!\\.)(?:[0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?(?:\\.(?:F32|F64|Dec))?|[0-9][0-9_]*[eE][-+]?[0-9]+|[0-9][0-9_]*\\.(?:F32|F64|Dec)))|((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?:0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*(?:\\.(?:U8|I8|U16|I16|U32|I32|U64|I64|U128|I128))?))",
 			"captures": {
 				"1": {
 					"name": "constant.numeric.float.roc"
@@ -303,6 +304,18 @@
 									"include": "#comments"
 								},
 								{
+									"comment": "Only the platform's location is a package scope",
+									"match": "\\b(platform)\\s+(\\\"[^\\\"]*\\\")",
+									"captures": {
+										"1": {
+											"name": "keyword.control.roc"
+										},
+										"2": {
+											"name": "string.quoted.double.roc meta.package.roc"
+										}
+									}
+								},
+								{
 									"name": "keyword.control.roc",
 									"match": "\\bplatform\\b"
 								},
@@ -316,8 +329,7 @@
 									"match": "[a-z_][A-Za-z0-9_]*(?=\\s*:)"
 								},
 								{
-									"name": "string.quoted.double.roc meta.package.roc",
-									"match": "\"[^\"]*\""
+									"include": "#strings"
 								},
 								{
 									"include": "#punctuation"
@@ -822,25 +834,9 @@
 			]
 		},
 		"calls": {
-			"patterns": [
-				{
-					"comment": "Method call on a value",
-					"match": "(\\.)([a-z_][A-Za-z0-9_]*!?)(?=\\()",
-					"captures": {
-						"1": {
-							"name": "keyword.operator.accessor.roc"
-						},
-						"2": {
-							"name": "entity.name.function.method.roc"
-						}
-					}
-				},
-				{
-					"comment": "Direct call or effectful function reference",
-					"name": "entity.name.function.roc",
-					"match": "\\b[a-z_][A-Za-z0-9_]*(?:!(?!:)|(?=\\())"
-				}
-			]
+			"comment": "Call, method call or effectful function reference",
+			"name": "entity.name.function.roc",
+			"match": "\\b[a-z_][A-Za-z0-9_]*(?:!(?!:)|(?=\\())"
 		},
 		"members": {
 			"comment": "Field access, record field shorthand, or record field name",

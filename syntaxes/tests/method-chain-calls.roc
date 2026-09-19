@@ -2,6 +2,6 @@
 
 result = Cmd.new("roc")
 	.args(["check"])
-#	^^^^ entity.name.function.method.roc
+#	^^^^ entity.name.function.roc
 	.exec!()
-#	^^^^^ entity.name.function.method.roc
+#	^^^^^ entity.name.function.roc
