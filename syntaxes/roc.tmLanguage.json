@@ -475,9 +475,9 @@
 			]
 		},
 		"annotations": {
-			"comment": "Type annotation: from a spaced colon to the end of the line",
+			"comment": "Type annotation: from a spaced colon to the end of the line, or to the method block of a nominal type. Bracketed types may continue over several lines.",
 			"begin": ":(?<=\\s:)[:=]?(?=\\s|$)",
-			"end": "$",
+			"end": "$|(?=\\.\\{)",
 			"beginCaptures": {
 				"0": {
 					"name": "punctuation.colon.roc"
@@ -494,6 +494,44 @@
 		},
 		"type-expression": {
 			"patterns": [
+				{
+					"comment": "where clause: method requirements on type variables",
+					"begin": "\\b(where)\\s*(\\[)",
+					"end": "\\]",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						},
+						"2": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"patterns": [
+						{
+							"comment": "where-clause method requirement",
+							"match": "\\b([a-z_][A-Za-z0-9_]*)(\\.)([a-z_][A-Za-z0-9_]*)(?=\\s+:\\s)",
+							"captures": {
+								"1": {
+									"name": "storage.type.parameter.roc"
+								},
+								"2": {
+									"name": "keyword.operator.accessor.roc"
+								},
+								"3": {
+									"name": "entity.name.function.roc"
+								}
+							}
+						},
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
 				{
 					"name": "keyword.control.roc",
 					"match": "\\bwhere\\b"
@@ -518,21 +556,55 @@
 					"match": "\\b[a-z_][A-Za-z0-9_]*(?=\\s+:\\s)"
 				},
 				{
-					"match": "\\b((?:Bool|Box|Decode|Dict|Encode|Hash|Inspect|List|Num|Result|Set|Str))(\\.)(?=[A-Z])",
-					"captures": {
-						"1": {
-							"name": "entity.name.namespace.builtin.roc"
-						},
-						"2": {
-							"name": "keyword.operator.accessor.roc"
-						}
-					}
+					"include": "#comments"
 				},
 				{
+					"include": "#tag-union-type"
+				},
+				{
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"begin": "\\(",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Module qualifier of a type",
 					"match": "\\b([A-Z][A-Za-z0-9_]*)(\\.)(?=[A-Z])",
 					"captures": {
 						"1": {
-							"name": "entity.name.namespace.roc"
+							"name": "storage.type.roc"
 						},
 						"2": {
 							"name": "keyword.operator.accessor.roc"
@@ -540,8 +612,15 @@
 					}
 				},
 				{
-					"name": "storage.type.roc",
-					"match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+					"match": "\\b(?:((?:Bool|Box|Dec|Decode|Dict|Encode|Hash|Inspect|Int|List|Num|Result|Set|Str|F32|F64|[IU](?:8|16|32|64|128)))|([A-Z][A-Za-z0-9_]*))\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.builtin.roc"
+						},
+						"2": {
+							"name": "storage.type.roc"
+						}
+					}
 				},
 				{
 					"name": "storage.type.parameter.roc",
@@ -838,6 +917,86 @@
 		"constructors": {
 			"name": "entity.name.type.constructor.roc",
 			"match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+		},
+		"tag-union-type": {
+			"begin": "\\[",
+			"end": "\\]",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.brackets.square.roc"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.brackets.square.roc"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#tag-union-type"
+				},
+				{
+					"begin": "\\(",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"name": "keyword.operator.roc",
+					"match": "\\.\\."
+				},
+				{
+					"name": "storage.type.inferred.roc",
+					"match": "\\b_\\b"
+				},
+				{
+					"name": "entity.name.type.variant.roc",
+					"match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+				},
+				{
+					"name": "storage.type.parameter.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+				},
+				{
+					"include": "#type-expression"
+				}
+			],
+			"comment": "Tag union type: tags are variants, payloads are types"
 		}
 	}
 }
