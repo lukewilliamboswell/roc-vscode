@@ -10,12 +10,20 @@
 			"reason": "Arithmetic operators are not scoped yet."
 		},
 		{
+			"file": "syntaxes/tests/break-keyword.roc",
+			"reason": "Break expressions are still scoped as general variables."
+		},
+		{
 			"file": "syntaxes/tests/crash-keyword.roc",
 			"reason": "The crash keyword is still scoped as a variable."
 		},
 		{
 			"file": "syntaxes/tests/direct-function-call.roc",
 			"reason": "Direct function calls are not scoped as functions yet."
+		},
+		{
+			"file": "syntaxes/tests/effectful-function-annotation.roc",
+			"reason": "Effectful function names in type annotations are still scoped as general variables."
 		},
 		{
 			"file": "syntaxes/tests/effectful-qualified-call.roc",
@@ -42,6 +50,10 @@
 			"reason": "Modern app header keywords, provided names, package aliases, and platform paths are not scoped semantically yet."
 		},
 		{
+			"file": "syntaxes/tests/multiline-string-interpolation-call.roc",
+			"reason": "Expressions inside multiline string interpolation are flattened into one interpolation scope instead of receiving Roc expression scopes."
+		},
+		{
 			"file": "syntaxes/tests/method-chain-calls.roc",
 			"reason": "Functions in chained and effectful method-call positions are not scoped as functions yet."
 		},
@@ -58,8 +70,24 @@
 			"reason": "Package headers and their provided module names are not scoped semantically yet."
 		},
 		{
+			"file": "syntaxes/tests/plain-module-import.roc",
+			"reason": "Module names in plain imports are still scoped as general types."
+		},
+		{
+			"file": "syntaxes/tests/platform-header-clauses.roc",
+			"reason": "Platform headers and their clause keywords are still scoped as general variables."
+		},
+		{
+			"file": "syntaxes/tests/qualified-boolean.roc",
+			"reason": "The Bool namespace in qualified boolean literals is still scoped as a general type."
+		},
+		{
 			"file": "syntaxes/tests/qualified-function-call.roc",
 			"reason": "Namespaces and function names in qualified calls are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/qualified-tag-constructor.roc",
+			"reason": "Namespaces and constructors in multiply-qualified tag expressions are still scoped as general types."
 		},
 		{
 			"file": "syntaxes/tests/record-builder.roc",
@@ -108,6 +136,10 @@
 		{
 			"file": "syntaxes/tests/type-parameters.roc",
 			"reason": "Lowercase type parameters are still scoped as general variables."
+		},
+		{
+			"file": "syntaxes/tests/uppercase-hex-literal.roc",
+			"reason": "Hexadecimal literals containing uppercase digits are only partially scoped as numbers."
 		}
 	]
 }
