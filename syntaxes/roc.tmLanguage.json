@@ -84,7 +84,7 @@
 		},
 		"numbers": {
 			"comment": "A minus sign directly before a digit, and not directly after a value, is part of the literal",
-			"match": "((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?<!\\.)(?:[0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?(?:\\.(?:F32|F64|Dec))?|[0-9][0-9_]*[eE][-+]?[0-9]+|[0-9][0-9_]*\\.(?:F32|F64|Dec)))|((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?:0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*(?:\\.(?:U8|I8|U16|I16|U32|I32|U64|I64|U128|I128))?))",
+			"match": "((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?<!\\.)(?:[0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?(?:\\.[A-Z][A-Za-z0-9_]*)?|[0-9][0-9_]*[eE][-+]?[0-9]+|[0-9][0-9_]*\\.(?:F32|F64|Dec)))|((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?:0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*)(?:\\.[A-Z][A-Za-z0-9_]*)?)",
 			"captures": {
 				"1": {
 					"name": "constant.numeric.float.roc"
@@ -147,7 +147,7 @@
 			}
 		},
 		"operators": {
-			"match": "(\\|>|\\b(?:or|and)\\b|!=|!|->|=>|>=|<=|>|<|==|:=|\\.\\.\\.?|\\?\\?|::)|(=)|(\\?)|(//|[-+*/%])",
+			"match": "(\\|>|\\b(?:or|and)\\b|!=|!|->|=>|>=|<=|>|<|==|:=|\\.\\.[=<]|\\.\\.\\.?|\\?\\?|::)|(=)|(\\?)|(//|[-+*/%])",
 			"captures": {
 				"1": {
 					"name": "keyword.operator.roc"
@@ -165,7 +165,7 @@
 		},
 		"variables": {
 			"name": "variable.other.roc",
-			"match": "(?<!(?<!\\.)\\.)(?:\\b|\\$)[a-z_][a-z0-9_]*(?:!|\\b)",
+			"match": "(?<!(?<!\\.)\\.)(?:\\b|\\$)[a-z_][A-Za-z0-9_]*(?:!|\\b)",
 			"comment": "Uses a negative lookbehind to exclude a presceding dot (e.g. `.identifier`), but include two presceding dots (e.g. `..identifier`)"
 		},
 		"keywords": {
