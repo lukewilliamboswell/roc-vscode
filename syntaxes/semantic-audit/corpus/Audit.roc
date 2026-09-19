@@ -17,14 +17,18 @@ import Src/Widget as W exposing [make]
 import Src/Widget.Err as WE
 
 Pair(a) : (a, a)
+
 Shape : [Circle(F64), Square(F64), Dot]
 
 max_size : U64
-max_size = 0x1F.U8.to_u64() + 1_000
+max_size = (0x1F.U8).to_u64() + 1_000
 
 ratio = 12.5e2
+
 small = -3.I64
+
 letter = 'a'
+
 multi =
     \\first line ${max_size.to_str()}
     \\second line
@@ -53,7 +57,11 @@ total = |items| {
 }
 
 classify : U64 -> Audit.Kind
-classify = |n| if n < 10 and n != 7 or n == 99 { Small } else { Large(n) }
+classify = |n| if n < 10 and n != 7 or n == 99 {
+    Small
+} else {
+    Large(n)
+}
 
 first_or : List(U64), U64 -> U64
 first_or = |items, fallback| items.first() ?? fallback
