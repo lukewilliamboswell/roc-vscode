@@ -435,24 +435,47 @@
 		"imports": {
 			"patterns": [
 				{
-					"match": "\\b(import)\\s+(?:([a-z_][A-Za-z0-9_]*)(\\.)|((?:\\.\\.?/)+))?([A-Z][A-Za-z0-9_]*)?",
-					"captures": {
+					"comment": "Import target: `/` traverses directories, `.` selects a package or a nested type, `as` names the imported type",
+					"begin": "\\b(import)\\b",
+					"end": "$|(?=\"|\\bexposing\\b)",
+					"beginCaptures": {
 						"1": {
 							"name": "keyword.control.import.roc"
-						},
-						"2": {
-							"name": "variable.other.roc"
-						},
-						"3": {
-							"name": "keyword.operator.accessor.roc"
-						},
-						"4": {
-							"name": "punctuation.separator.path.roc"
-						},
-						"5": {
-							"name": "storage.type.roc"
 						}
-					}
+					},
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"match": "\\b(as)\\s+([A-Z][A-Za-z0-9_]*)",
+							"captures": {
+								"1": {
+									"name": "keyword.control.roc"
+								},
+								"2": {
+									"name": "storage.type.roc"
+								}
+							}
+						},
+						{
+							"match": "([a-z_][A-Za-z0-9_]*)(?=\\.)|((?:\\.\\.?/)+|/)|(\\.)|([A-Z][A-Za-z0-9_]*)",
+							"captures": {
+								"1": {
+									"name": "variable.other.roc"
+								},
+								"2": {
+									"name": "punctuation.separator.path.roc"
+								},
+								"3": {
+									"name": "keyword.operator.accessor.roc"
+								},
+								"4": {
+									"name": "storage.type.roc"
+								}
+							}
+						}
+					]
 				},
 				{
 					"begin": "\\b(exposing)\\s*(\\[)",
@@ -479,8 +502,15 @@
 							"match": "\\bas\\b"
 						},
 						{
-							"name": "meta.exposed.roc",
-							"match": "[A-Za-z_][A-Za-z0-9_]*!?"
+							"match": "([A-Z][A-Za-z0-9_]*)|([a-z_][A-Za-z0-9_]*!?)",
+							"captures": {
+								"1": {
+									"name": "meta.exposed.roc storage.type.roc"
+								},
+								"2": {
+									"name": "meta.exposed.roc entity.name.function.roc"
+								}
+							}
 						},
 						{
 							"include": "#punctuation"
