@@ -101,6 +101,7 @@ export function normalizeTextMateScope(scope) {
 	if (value.startsWith("variable.other.type") || value.startsWith("storage.type.parameter")) {
 		return "type.parameter";
 	}
+	if (value.startsWith("storage.type.inferred")) return "type.inferred";
 	if (value.startsWith("storage.type") || value.startsWith("entity.name.type")) return "type";
 
 	if (value.startsWith("entity.name.namespace.builtin")) return "namespace.builtin";

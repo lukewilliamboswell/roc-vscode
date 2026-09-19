@@ -27,6 +27,7 @@ test("normalizes raw tree-sitter captures and TextMate scopes", () => {
 	assert.equal(normalizeTreeSitterCapture("keyword.operator"), "operator.keyword");
 	assert.equal(normalizeTextMateScope("entity.name.function.method.roc"), "function.method");
 	assert.equal(normalizeTextMateScope("comment.line.documentation.roc"), "comment.documentation");
+	assert.equal(normalizeTextMateScope("storage.type.inferred.roc"), "type.inferred");
 });
 
 test("validates the vendored oracle manifest", () => {

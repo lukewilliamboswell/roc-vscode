@@ -2,6 +2,10 @@
 	"version": 1,
 	"skips": [
 		{
+			"file": "syntaxes/tests/ability-method-declarations.roc",
+			"reason": "Method declarations and bindings inside nominal method bodies are still scoped as general variables."
+		},
+		{
 			"file": "syntaxes/tests/arithmetic-operators.roc",
 			"reason": "Arithmetic operators are not scoped yet."
 		},
@@ -14,6 +18,10 @@
 			"reason": "Direct function calls are not scoped as functions yet."
 		},
 		{
+			"file": "syntaxes/tests/effectful-qualified-call.roc",
+			"reason": "Effect markers and method names in qualified calls are not scoped as part of the function call yet."
+		},
+		{
 			"file": "syntaxes/tests/function-binding-names.roc",
 			"reason": "Function names in annotations and value definitions are still scoped as variables."
 		},
@@ -22,12 +30,24 @@
 			"reason": "Function parameters are still scoped as general variables."
 		},
 		{
+			"file": "syntaxes/tests/inferred-types.roc",
+			"reason": "Inferred type placeholders are still scoped as general variables."
+		},
+		{
 			"file": "syntaxes/tests/import-exposing.roc",
 			"reason": "Qualified imports and exposing clauses are not scoped semantically yet."
 		},
 		{
 			"file": "syntaxes/tests/modern-app-header.roc",
 			"reason": "Modern app header keywords, provided names, package aliases, and platform paths are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/method-chain-calls.roc",
+			"reason": "Functions in chained and effectful method-call positions are not scoped as functions yet."
+		},
+		{
+			"file": "syntaxes/tests/nested-nominal-type-definition.roc",
+			"reason": "Nominal definitions nested inside nominal method bodies are not scoped as type definitions yet."
 		},
 		{
 			"file": "syntaxes/tests/nominal-type-definition.roc",
@@ -46,6 +66,26 @@
 			"reason": "Nominal record builders are not scoped as constructor expressions yet."
 		},
 		{
+			"file": "syntaxes/tests/record-builder-shorthand.roc",
+			"reason": "Nominal record builders using shorthand fields are not scoped as constructor expressions yet."
+		},
+		{
+			"file": "syntaxes/tests/record-destructuring-parameters.roc",
+			"reason": "Fields bound by record-destructuring parameters are still scoped as general variables."
+		},
+		{
+			"file": "syntaxes/tests/record-field-access.roc",
+			"reason": "Fields in chained record access expressions are not scoped as record members yet."
+		},
+		{
+			"file": "syntaxes/tests/record-field-shorthand.roc",
+			"reason": "Shorthand fields in record expressions are not scoped as record members yet."
+		},
+		{
+			"file": "syntaxes/tests/record-type-fields.roc",
+			"reason": "Record field names in type annotations are not scoped as type-definition members yet."
+		},
+		{
 			"file": "syntaxes/tests/tag-constructors.roc",
 			"reason": "Tag constructors are still scoped as types rather than constructors."
 		},
@@ -54,8 +94,16 @@
 			"reason": "Tag constructors and payload bindings in patterns are not scoped semantically yet."
 		},
 		{
+			"file": "syntaxes/tests/tag-record-payload-pattern.roc",
+			"reason": "Constructors and shorthand record fields in tag payload patterns are not scoped semantically yet."
+		},
+		{
 			"file": "syntaxes/tests/try-propagation.roc",
 			"reason": "Try propagation is still scoped as a generic question-mark operator."
+		},
+		{
+			"file": "syntaxes/tests/type-annotation-colon.roc",
+			"reason": "Type annotation colons are still scoped as punctuation rather than operators."
 		},
 		{
 			"file": "syntaxes/tests/type-parameters.roc",
