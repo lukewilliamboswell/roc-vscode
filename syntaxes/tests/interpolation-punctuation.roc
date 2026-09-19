@@ -15,6 +15,6 @@ pair = "${first}${second}"
 multi =
     \\total: ${Num.to_str(total)} items
 #            ^^ punctuation.definition.interpolation.roc
-#              ^^^ entity.name.namespace.builtin.roc
+#              ^^^ storage.type.builtin.roc
 #                               ^ punctuation.definition.interpolation.roc
 #                                 ^^^^^ string.multiline.roc

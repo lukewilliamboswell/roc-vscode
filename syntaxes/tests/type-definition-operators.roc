@@ -11,11 +11,11 @@ Opaque :: [Hidden]
 #          ^^^^^^ entity.name.type.variant.roc
 
 Color : [Red, Green]
-# <----- storage.type.roc
+# <----- entity.name.type.definition.roc
 #     ^ keyword.operator.roc
 
 Pair(a, b) : (a, b)
-# <---- storage.type.roc
+# <---- entity.name.type.definition.roc
 #    ^ storage.type.parameter.roc
 #          ^ keyword.operator.roc
 #                ^ storage.type.parameter.roc

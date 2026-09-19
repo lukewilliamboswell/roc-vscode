@@ -2,4 +2,8 @@
 
 import Unicode
 # <------ keyword.control.import.roc
-#      ^^^^^^^ entity.name.namespace.roc
+#      ^^^^^^^ storage.type.roc
+
+parts = Unicode.source_parts(code_points)
+#       ^^^^^^^ storage.type.roc
+#               ^^^^^^^^^^^^ entity.name.function.roc

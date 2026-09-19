@@ -20,7 +20,7 @@ app [main!] {
 import json.Json
 # <------ keyword.control.import.roc
 #      ^^^^ variable.other.roc
-#           ^^^^ entity.name.namespace.roc
+#           ^^^^ storage.type.roc
 
 
 main! = |_args| Ok({})

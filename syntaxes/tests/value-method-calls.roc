@@ -13,7 +13,7 @@ trimmed = "  text  ".trim()
 #                    ^^^^ entity.name.function.roc
 
 total = List.sum(values)
-#       ^^^^ entity.name.namespace.builtin.roc
+#       ^^^^ storage.type.builtin.roc
 #            ^^^ entity.name.function.roc
 
 nested = parse(input).unwrap_or(0)

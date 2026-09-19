@@ -1,7 +1,7 @@
 # SYNTAX TEST "source.roc" "Types spanning several lines"
 
 Event : [
-# <----- storage.type.roc
+# <----- entity.name.type.definition.roc
 #       ^ punctuation.brackets.square.type.roc
 
     Exit(I64),

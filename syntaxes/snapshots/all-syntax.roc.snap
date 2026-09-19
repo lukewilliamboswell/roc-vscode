@@ -49,7 +49,7 @@
 #         ^ source.roc
 #          ^ source.roc keyword.operator.assignment.roc
 #           ^ source.roc
-#            ^^^ source.roc entity.name.namespace.roc
+#            ^^^ source.roc storage.type.roc
 #               ^ source.roc keyword.operator.accessor.roc
 #                ^^^^^^ source.roc entity.name.function.roc
 #                      ^ source.roc punctuation.brackets.round.roc
@@ -61,7 +61,7 @@
 #         ^ source.roc
 #          ^ source.roc keyword.operator.assignment.roc
 #           ^ source.roc
-#            ^^^ source.roc entity.name.namespace.roc
+#            ^^^ source.roc storage.type.roc
 #               ^ source.roc keyword.operator.accessor.roc
 #                ^^^^^^ source.roc entity.name.function.roc
 #                      ^ source.roc punctuation.brackets.round.roc
@@ -217,7 +217,7 @@
 #        ^^^^^^^ source.roc variable.other.member.roc
 #               ^ source.roc punctuation.colon.roc
 #                ^ source.roc
-#                 ^^^ source.roc entity.name.namespace.roc
+#                 ^^^ source.roc storage.type.roc
 #                    ^ source.roc keyword.operator.accessor.roc
 #                     ^^^^^^^^ source.roc entity.name.function.roc
 #                             ^ source.roc punctuation.brackets.round.roc
@@ -636,7 +636,7 @@
 #            ^ source.roc string.quoted.double.roc
 #             ^^^^^^^^^^^ source.roc string.quoted.double.roc
 #                        ^^ source.roc string.quoted.double.roc meta.interpolation.roc punctuation.definition.interpolation.roc
-#                          ^^^ source.roc string.quoted.double.roc meta.interpolation.roc entity.name.namespace.builtin.roc
+#                          ^^^ source.roc string.quoted.double.roc meta.interpolation.roc storage.type.builtin.roc
 #                             ^ source.roc string.quoted.double.roc meta.interpolation.roc keyword.operator.accessor.roc
 #                              ^^^^^^^ source.roc string.quoted.double.roc meta.interpolation.roc entity.name.function.roc
 #                                     ^ source.roc string.quoted.double.roc meta.interpolation.roc punctuation.brackets.round.roc
@@ -789,7 +789,7 @@
 #             ^ source.roc
 #              ^ source.roc keyword.operator.assignment.roc
 #               ^ source.roc
-#                ^^^ source.roc entity.name.namespace.roc
+#                ^^^ source.roc storage.type.roc
 #                   ^ source.roc keyword.operator.accessor.roc
 #                    ^^^^^^^^ source.roc entity.name.function.roc
 #                            ^ source.roc punctuation.brackets.round.roc
@@ -1065,7 +1065,9 @@
 >    var $allTrue = True
 #^^^^ source.roc
 #    ^^^ source.roc keyword.control.roc
-#       ^^^^^^^^^^ source.roc
+#       ^ source.roc
+#        ^^^^^^^^ source.roc variable.other.roc
+#                ^ source.roc
 #                 ^ source.roc keyword.operator.assignment.roc
 #                  ^ source.roc
 #                   ^^^^ source.roc constant.language.roc
@@ -1092,7 +1094,9 @@
 #                     ^ source.roc
 #                      ^ source.roc punctuation.brackets.curly.roc
 >            $allTrue = False
-#^^^^^^^^^^^^^^^^^^^^^ source.roc
+#^^^^^^^^^^^^ source.roc
+#            ^^^^^^^^ source.roc variable.other.roc
+#                    ^ source.roc
 #                     ^ source.roc keyword.operator.assignment.roc
 #                      ^ source.roc
 #                       ^^^^^ source.roc constant.language.roc
@@ -1117,7 +1121,8 @@
 #^^^^ source.roc
 #    ^ source.roc punctuation.brackets.curly.roc
 >    $allTrue
-#^^^^^^^^^^^^^ source.roc
+#^^^^ source.roc
+#    ^^^^^^^^ source.roc variable.other.roc
 >}
 #^ source.roc punctuation.brackets.curly.roc
 >
@@ -1213,7 +1218,7 @@
 #         ^ source.roc punctuation.brackets.round.roc
 #          ^ source.roc string.quoted.double.roc
 #           ^^ source.roc string.quoted.double.roc meta.interpolation.roc punctuation.definition.interpolation.roc
-#             ^^^ source.roc string.quoted.double.roc meta.interpolation.roc entity.name.namespace.builtin.roc
+#             ^^^ source.roc string.quoted.double.roc meta.interpolation.roc storage.type.builtin.roc
 #                ^ source.roc string.quoted.double.roc meta.interpolation.roc keyword.operator.accessor.roc
 #                 ^^^^^^^ source.roc string.quoted.double.roc meta.interpolation.roc entity.name.function.roc
 #                        ^ source.roc string.quoted.double.roc meta.interpolation.roc punctuation.brackets.round.roc
@@ -2314,7 +2319,7 @@
 #         ^ source.roc
 #          ^^ source.roc keyword.operator.roc
 #            ^ source.roc
-#             ^^^^ source.roc entity.name.namespace.builtin.roc
+#             ^^^^ source.roc storage.type.builtin.roc
 #                 ^ source.roc keyword.operator.accessor.roc
 #                  ^^^^^ source.roc constant.language.roc
 >    }
@@ -2374,7 +2379,7 @@
 #    ^^^^^^^^^^^^^^^^^^^^^ source.roc comment.line.roc
 >    Str.count_utf8_bytes(first)
 #^^^^ source.roc
-#    ^^^ source.roc entity.name.namespace.builtin.roc
+#    ^^^ source.roc storage.type.builtin.roc
 #       ^ source.roc keyword.operator.accessor.roc
 #        ^^^^^^^^^^^^^^^^ source.roc entity.name.function.roc
 #                        ^ source.roc punctuation.brackets.round.roc
@@ -2389,7 +2394,7 @@
 #         ^ source.roc
 #          ^ source.roc keyword.operator.assignment.roc
 #           ^ source.roc
-#            ^^^ source.roc entity.name.namespace.builtin.roc
+#            ^^^ source.roc storage.type.builtin.roc
 #               ^ source.roc keyword.operator.accessor.roc
 #                ^^^^^^ source.roc variable.other.member.roc
 >
@@ -2439,7 +2444,7 @@
 #^^^^^^^^ source.roc
 #        ^^ source.roc keyword.operator.roc
 #          ^ source.roc
-#           ^^^ source.roc entity.name.namespace.builtin.roc
+#           ^^^ source.roc storage.type.builtin.roc
 #              ^ source.roc keyword.operator.accessor.roc
 #               ^^^^^^^^^ source.roc entity.name.function.roc
 #                        ^ source.roc punctuation.brackets.round.roc
@@ -2637,7 +2642,7 @@
 ># Type alias for an extensible tag union. You can use a type var (`others`) like so:
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.roc comment.line.roc
 >Letters(others) : [A, B, ..others]
-#^^^^^^^ source.roc storage.type.roc
+#^^^^^^^ source.roc entity.name.type.definition.roc
 #       ^ source.roc punctuation.brackets.round.roc
 #        ^^^^^^ source.roc storage.type.parameter.roc
 #              ^ source.roc punctuation.brackets.round.roc
@@ -2798,7 +2803,7 @@
 #         ^ source.roc punctuation.brackets.round.roc
 #          ^ source.roc string.quoted.double.roc
 #           ^^ source.roc string.quoted.double.roc meta.interpolation.roc punctuation.definition.interpolation.roc
-#             ^^^ source.roc string.quoted.double.roc meta.interpolation.roc entity.name.namespace.builtin.roc
+#             ^^^ source.roc string.quoted.double.roc meta.interpolation.roc storage.type.builtin.roc
 #                ^ source.roc string.quoted.double.roc meta.interpolation.roc keyword.operator.accessor.roc
 #                 ^^^^^^^ source.roc string.quoted.double.roc meta.interpolation.roc entity.name.function.roc
 #                        ^ source.roc string.quoted.double.roc meta.interpolation.roc punctuation.brackets.round.roc
@@ -2820,12 +2825,12 @@
 #          ^ source.roc punctuation.brackets.round.roc
 #           ^^^^^^^^^^^^^^^^^ source.roc entity.name.function.roc
 #                            ^ source.roc punctuation.brackets.round.roc
-#                             ^^^^ source.roc entity.name.namespace.builtin.roc
+#                             ^^^^ source.roc storage.type.builtin.roc
 #                                 ^ source.roc keyword.operator.accessor.roc
 #                                  ^^^^ source.roc constant.language.roc
 #                                      ^ source.roc punctuation.comma.roc
 #                                       ^ source.roc
-#                                        ^^^^ source.roc entity.name.namespace.builtin.roc
+#                                        ^^^^ source.roc storage.type.builtin.roc
 #                                            ^ source.roc keyword.operator.accessor.roc
 #                                             ^^^^^ source.roc constant.language.roc
 #                                                  ^ source.roc punctuation.brackets.round.roc
@@ -3430,7 +3435,7 @@
 #          ^ source.roc
 #           ^ source.roc keyword.operator.assignment.roc
 #            ^ source.roc
-#             ^^^^^^ source.roc entity.name.namespace.roc
+#             ^^^^^^ source.roc storage.type.roc
 #                   ^ source.roc keyword.operator.accessor.roc
 #                    ^^^ source.roc entity.name.function.roc
 #                       ^ source.roc punctuation.brackets.round.roc
@@ -3518,7 +3523,7 @@
 #          ^ source.roc punctuation.brackets.round.roc
 #           ^^^^^^^^^^^^ source.roc entity.name.function.roc
 #                       ^ source.roc punctuation.brackets.round.roc
-#                        ^^^^ source.roc entity.name.namespace.builtin.roc
+#                        ^^^^ source.roc storage.type.builtin.roc
 #                            ^ source.roc keyword.operator.accessor.roc
 #                             ^^^^^ source.roc constant.language.roc
 #                                  ^ source.roc punctuation.brackets.round.roc
@@ -3667,13 +3672,13 @@
 >expect Bool.True != Bool.False
 #^^^^^^ source.roc keyword.control.roc
 #      ^ source.roc
-#       ^^^^ source.roc entity.name.namespace.builtin.roc
+#       ^^^^ source.roc storage.type.builtin.roc
 #           ^ source.roc keyword.operator.accessor.roc
 #            ^^^^ source.roc constant.language.roc
 #                ^ source.roc
 #                 ^^ source.roc keyword.operator.roc
 #                   ^ source.roc
-#                    ^^^^ source.roc entity.name.namespace.builtin.roc
+#                    ^^^^ source.roc storage.type.builtin.roc
 #                        ^ source.roc keyword.operator.accessor.roc
 #                         ^^^^^ source.roc constant.language.roc
 >

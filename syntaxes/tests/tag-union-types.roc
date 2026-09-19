@@ -1,7 +1,7 @@
 # SYNTAX TEST "source.roc" "Tag union types"
 
 Color : [Red, Green, Custom(U8, U8, U8)]
-# <----- storage.type.roc
+# <----- entity.name.type.definition.roc
 #       ^ punctuation.brackets.square.type.roc
 #        ^^^ entity.name.type.variant.roc
 #             ^^^^^ entity.name.type.variant.roc

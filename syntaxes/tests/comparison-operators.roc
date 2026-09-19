@@ -22,7 +22,7 @@ negated = !ready
 
 piped = items |> List.len
 #             ^^ keyword.operator.roc
-#                ^^^^ entity.name.namespace.builtin.roc
+#                ^^^^ storage.type.builtin.roc
 
 whole = total // count
 #             ^^ keyword.operator.arithmetic.roc

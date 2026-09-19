@@ -61,7 +61,7 @@ TypeAlias := { x : I64, y : I64 }
 #         ^^ keyword.operator.roc
 
 Color : [Red, Green, Blue]
-# <----- storage.type.roc
+# <----- entity.name.type.definition.roc
 #        ^^^ entity.name.type.variant.roc
 #                    ^^^^ entity.name.type.variant.roc
 
@@ -71,7 +71,7 @@ Result : [Ok(I64), Err(Str)]
 #                  ^^^ entity.name.type.variant.roc
 
 Maybe(a) : [Some(a), None]
-# <----- storage.type.roc
+# <----- entity.name.type.definition.roc
 #     ^ storage.type.parameter.roc
 #           ^^^^ entity.name.type.variant.roc
 #                ^ storage.type.parameter.roc

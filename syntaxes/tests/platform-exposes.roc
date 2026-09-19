@@ -12,10 +12,10 @@ platform "example"
 #           ^ punctuation.brackets.square.roc
 
         Stdout,
-#       ^^^^^^ entity.name.namespace.roc
+#       ^^^^^^ storage.type.roc
 
         Http,
-#       ^^^^ entity.name.namespace.roc
+#       ^^^^ storage.type.roc
 
     ]
 #   ^ punctuation.brackets.square.roc
@@ -37,7 +37,7 @@ platform "example"
 
 
 import Stdout
-#      ^^^^^^ entity.name.namespace.roc
+#      ^^^^^^ storage.type.roc
 
 
 main_for_host! : () => {}
