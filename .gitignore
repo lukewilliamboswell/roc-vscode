@@ -19,6 +19,9 @@ images/*.png
 *.log
 logs/
 
+# Local real-world highlighting oracle checkouts
+.oracle-corpus/
+
 # Nix
 result
 .direnv

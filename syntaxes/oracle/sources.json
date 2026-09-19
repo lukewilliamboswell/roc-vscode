@@ -1,0 +1,53 @@
+{
+	"repositories": [
+		{
+			"name": "roc-ansi",
+			"url": "https://github.com/lukewilliamboswell/roc-ansi.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-parser",
+			"url": "https://github.com/lukewilliamboswell/roc-parser.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "unicode",
+			"url": "https://github.com/roc-lang/unicode.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "basic-webserver",
+			"url": "https://github.com/roc-lang/basic-webserver.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-random",
+			"url": "https://github.com/kili-ilo/roc-random.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-blueprint",
+			"url": "https://github.com/lukewilliamboswell/roc-blueprint.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "basic-ssg",
+			"url": "https://github.com/lukewilliamboswell/basic-ssg.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		}
+	]
+}

@@ -60,3 +60,19 @@ test-textmate-grammar:
 # Update the snapshot tests for the textmate grammar
 update-snapshots:
     npx --no-install --call 'textmate-grammar-snap -u syntaxes/snapshots/*.roc'
+
+# Compare the TextMate grammar with the vendored tree-sitter oracle.
+oracle *ARGS:
+    node scripts/highlighting-oracle.mjs {{ ARGS }}
+
+# Fetch or refresh the ignored real-world Roc corpus.
+oracle-fetch:
+    node scripts/fetch-oracle-corpus.mjs
+
+# Compare all fetched real-world Roc sources.
+oracle-external *ARGS:
+    node scripts/highlighting-oracle.mjs --external {{ ARGS }}
+
+# Test the local-only oracle harness.
+oracle-test:
+    node --test scripts/highlighting-oracle.test.mjs
