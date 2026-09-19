@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,8 +78,8 @@ const isWord = (character) => character !== undefined && /[A-Za-z0-9_]/.test(cha
 // - "drifted": a range that cuts into a word at one edge but not the other has
 //   almost certainly slid sideways (tabs make this easy). A range wholly inside
 //   a word is a deliberate partial assertion and is allowed.
-// - "ignored": `# <--` is only an assertion when the `#` is in column one; an
-//   indented arrow line is treated as source, so it asserts nothing.
+// - "ignored": an indented `# <--` arrow still measures from column one of the
+//   source line, not from the comment, so it rarely covers what was intended.
 // - "empty": an arrow covers one column per dash, starting after one column
 //   per tilde. The `<` itself covers nothing, so `# <~~` is an empty range.
 export function findFixtureProblems(text) {
@@ -104,9 +105,81 @@ export function findFixtureProblems(text) {
 	return problems;
 }
 
+// textmate-grammar-test only tokenizes source lines that carry assertions, and
+// carries tokenizer state from one asserted line straight to the next. An
+// unasserted line that opens or closes a region (a lone `}`, a multiline string)
+// is therefore never seen, and later assertions run in the wrong state. Compare
+// the tool's view with a full tokenization and report where they diverge.
+const UPSTREAM_ASSERTION = /\s*#\s*(\^|<[~]*[-]+)/;
+
+// StateStack.equals also compares match positions, which differ between the two
+// walks; the sequence of open rules is what matters here.
+function sameOpenRules(left, right) {
+	let a = left;
+	let b = right;
+	while (a && b) {
+		if (a.ruleId !== b.ruleId) return false;
+		a = a.parent;
+		b = b.parent;
+	}
+	return !a && !b;
+}
+
+export function findStateGaps(text, grammar, initialStack) {
+	const lines = text.split(/\r\n|\n/);
+	const asserted = new Set();
+	let source = 0;
+	for (let index = 1; index < lines.length; index += 1) {
+		if (UPSTREAM_ASSERTION.test(lines[index])) asserted.add(source);
+		else source = index;
+	}
+	const gaps = [];
+	// INITIAL is a placeholder; one empty line resolves it to the real root rule.
+	let full = grammar.tokenizeLine("", initialStack).ruleStack;
+	let upstream = full;
+	for (let index = 1; index < lines.length; index += 1) {
+		if (UPSTREAM_ASSERTION.test(lines[index])) continue;
+		if (asserted.has(index) && !sameOpenRules(full, upstream)) {
+			gaps.push({ kind: "state-gap", line: index + 1 });
+			upstream = full;
+		}
+		full = grammar.tokenizeLine(lines[index], full).ruleStack;
+		if (asserted.has(index)) upstream = grammar.tokenizeLine(lines[index], upstream).ruleStack;
+	}
+	return gaps;
+}
+
+export async function loadVendoredGrammar(root) {
+	const require = createRequire(import.meta.url);
+	const vendor = path.join(root, "syntaxes", "oracle", "vendor");
+	const { loadWASM, OnigScanner, OnigString } = require(path.join(vendor, "vscode-oniguruma.js"));
+	const { INITIAL, Registry, parseRawGrammar } = require(path.join(vendor, "vscode-textmate.js"));
+	const wasm = readFileSync(path.join(vendor, "vscode-oniguruma.wasm"));
+	await loadWASM(wasm.buffer.slice(wasm.byteOffset, wasm.byteOffset + wasm.byteLength));
+	const grammarPath = path.join(root, "syntaxes", "roc.tmLanguage.json");
+	const registry = new Registry({
+		onigLib: Promise.resolve({ createOnigString: (value) => new OnigString(value), createOnigScanner: (patterns) => new OnigScanner(patterns) }),
+		loadGrammar: async () => parseRawGrammar(readFileSync(grammarPath, "utf8"), grammarPath),
+	});
+	return { grammar: await registry.loadGrammar("source.roc"), initialStack: INITIAL };
+}
+
+export async function checkStateGaps({ repositoryRoot, stderr = process.stderr } = {}) {
+	const root = repositoryRoot ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+	const { grammar, initialStack } = await loadVendoredGrammar(root);
+	let count = 0;
+	for (const file of discoverFixtures(root)) {
+		for (const gap of findStateGaps(readFileSync(path.join(root, file), "utf8"), grammar, initialStack)) {
+			count += 1;
+			stderr.write(`${file}:${gap.line}: unasserted lines above change tokenizer state, but textmate-grammar-test skips lines without assertions; assert on each line that opens or closes a region\n`);
+		}
+	}
+	return count;
+}
+
 const PROBLEM_MESSAGES = {
 	drifted: ({ start, end, text }) => `assertion columns ${start}-${end} cover "${text}", cutting through a word at one edge; the range has probably drifted or is one column short`,
-	ignored: () => "indented `# <` lines are not assertions and are silently ignored; put the # in column one or use carets",
+	ignored: () => "indented `# <` arrows still measure from column one, not from the comment; use carets for indented code",
 	empty: () => "arrow assertion has no dashes, so it covers nothing; each dash covers one column",
 };
 
@@ -157,7 +230,8 @@ export function runTextmateGrammarTests({
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : "";
 if (invokedPath === fileURLToPath(import.meta.url)) {
 	try {
-		process.exitCode = runTextmateGrammarTests();
+		const gaps = await checkStateGaps();
+		process.exitCode = gaps > 0 ? 1 : runTextmateGrammarTests();
 	} catch (error) {
 		console.error(`TextMate grammar test runner: ${error.message}`);
 		process.exitCode = 1;

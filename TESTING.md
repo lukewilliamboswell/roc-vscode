@@ -15,8 +15,10 @@ Skipped fixtures are visible technical debt, not an alternative assertion mode. 
 Before running the upstream tool, the local runner rejects assertion mistakes that `textmate-grammar-test` accepts silently:
 
 - **Drifted ranges.** A range that cuts through a word at one edge only has usually slid sideways, which is easy to do on tab-indented lines. A range wholly inside a word is treated as deliberate.
-- **Ignored arrows.** `# <--` is only an assertion when the `#` is in column one. An indented arrow line is parsed as source and asserts nothing, so use carets for indented code.
+- **Indented arrows.** `# <--` always measures from column one of the source line, even when the comment is indented, so use carets for indented code.
 - **Empty arrows.** An arrow covers one column per `-`, starting after one column per `~`. The `<` covers nothing, so `# <~~` is an empty range and `# <-----` covers five columns, not six.
+
+- **State gaps.** The upstream tool only tokenizes source lines that carry assertions, passing tokenizer state from one asserted line straight to the next. An unasserted line that opens or closes a region, such as a lone `}` or a multiline string, is never seen. The runner compares that view with a full tokenization and fails where they diverge; assert on every line that opens or closes a region.
 
 Assertions match scope names exactly: `keyword.control.roc` does not satisfy `keyword.control.import.roc` or the reverse.
 

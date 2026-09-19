@@ -6,6 +6,8 @@ import test from "node:test";
 import {
 	discoverFixtures,
 	findFixtureProblems,
+	findStateGaps,
+	loadVendoredGrammar,
 	formatSkipSummary,
 	runTextmateGrammarTests,
 	selectFixtures,
@@ -91,4 +93,15 @@ test("malformed fixtures fail the run before the upstream tool starts", () => {
 	assert.equal(status, 1);
 	assert.equal(spawned, false);
 	assert.match(errors, /drifted\.roc:3: .*one column short/);
+});
+
+test("state gaps are reported when an unasserted line opens or closes a region", async () => {
+	const root = path.resolve(import.meta.dirname, "..");
+	const { grammar, initialStack } = await loadVendoredGrammar(root);
+	const header = '# SYNTAX TEST "source.roc" "probe"\n\n';
+	const open = 'app [main!] {\n# <--- keyword.control.roc\n    pf: platform "x",\n';
+	const after = "\nimport Foo\n# <------ keyword.control.import.roc\n";
+	assert.deepEqual(findStateGaps(`${header}${open}}\n${after}`, grammar, initialStack), [{ kind: "state-gap", line: 8 }]);
+	assert.deepEqual(findStateGaps(`${header}${open}}\n# <- punctuation.brackets.curly.roc\n${after}`, grammar, initialStack), []);
+	assert.deepEqual(findStateGaps(`${header}value = 1\n\nother = 2\n# <----- variable.other.roc\n`, grammar, initialStack), []);
 });
