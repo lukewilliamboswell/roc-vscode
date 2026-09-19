@@ -27,7 +27,7 @@
 		},
 		{
 			"file": "syntaxes/tests/effectful-qualified-call.roc",
-			"reason": "Effect markers and method names in qualified calls are not scoped as part of the function call yet."
+			"reason": "Effectful qualified function identifiers are split between an unscoped name and an operator-scoped exclamation mark."
 		},
 		{
 			"file": "syntaxes/tests/function-binding-names.roc",
@@ -90,12 +90,16 @@
 			"reason": "Namespaces and constructors in multiply-qualified tag expressions are still scoped as general types."
 		},
 		{
-			"file": "syntaxes/tests/record-builder.roc",
-			"reason": "Nominal record builders are not scoped as constructor expressions yet."
+			"file": "syntaxes/tests/nominal-record-construction.roc",
+			"reason": "Nominal record constructions are not scoped as constructor expressions yet."
 		},
 		{
-			"file": "syntaxes/tests/record-builder-shorthand.roc",
-			"reason": "Nominal record builders using shorthand fields are not scoped as constructor expressions yet."
+			"file": "syntaxes/tests/nominal-record-construction-shorthand.roc",
+			"reason": "Nominal record constructions using shorthand fields are not scoped as constructor expressions yet."
+		},
+		{
+			"file": "syntaxes/tests/record-builder-suffix.roc",
+			"reason": "Record builder suffixes are split between punctuation and type scopes instead of being scoped as one suffix."
 		},
 		{
 			"file": "syntaxes/tests/record-destructuring-parameters.roc",

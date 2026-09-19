@@ -1,4 +1,4 @@
-# SYNTAX TEST "source.roc" "Record builders"
+# SYNTAX TEST "source.roc" "Nominal record construction"
 
 config = Config.{ host: "localhost" }
 #        ^^^^^^ entity.name.type.constructor.roc
