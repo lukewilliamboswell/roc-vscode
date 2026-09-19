@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add semantic TextMate scopes for functions, parameters, record members, namespaces, tag constructors, type definitions, headers and imports.
+
 ## v0.0.5
 
 - Fix brackets not automatically closing.
