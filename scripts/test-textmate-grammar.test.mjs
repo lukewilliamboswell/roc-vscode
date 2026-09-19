@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
 	discoverFixtures,
+	findFixtureProblems,
 	formatSkipSummary,
 	runTextmateGrammarTests,
 	selectFixtures,
@@ -67,4 +68,27 @@ test("upstream failures propagate", () => {
 	assert.equal(status, 7);
 	assert.deepEqual(receivedArguments, ["syntaxes/tests/active.roc"]);
 	assert.match(output.value, /1 active tests, 1 known unsupported tests skipped/);
+});
+
+test("fixture checks catch assertions the upstream tool accepts silently", () => {
+	const header = '# SYNTAX TEST "source.roc" "probe"\n';
+	const kinds = (body) => findFixtureProblems(header + body).map(({ kind }) => kind);
+	assert.deepEqual(kinds("\t.args(x)\n#\t ^^^^ entity.name.function.roc\n"), ["drifted"]);
+	assert.deepEqual(kinds("import Foo\n# <----- keyword.control.roc\n"), ["drifted"]);
+	assert.deepEqual(kinds("    value = 1\n    # <~~-- variable.other.roc\n"), ["ignored"]);
+	assert.deepEqual(kinds("value = 1\n# <~~ variable.other.roc\n"), ["empty"]);
+	assert.deepEqual(kinds("import Foo\n# <------ keyword.control.roc\n#      ^^^ entity.name.namespace.roc\n"), []);
+	assert.deepEqual(kinds("    value = 1\n#     ^^ variable.other.roc\n"), [], "a range wholly inside a word is deliberate");
+	assert.deepEqual(kinds("# <- not an assertion, just a comment after the header\n").length, 0);
+});
+
+test("malformed fixtures fail the run before the upstream tool starts", () => {
+	const root = repository();
+	writeFileSync(path.join(root, "syntaxes/tests/drifted.roc"), '# SYNTAX TEST "source.roc" "probe"\nimport Foo\n# <----- keyword.control.roc\n');
+	let spawned = false;
+	let errors = "";
+	const status = runTextmateGrammarTests({ repositoryRoot: root, spawn: () => { spawned = true; return { status: 0 }; }, stdout: { write() {} }, stderr: { write: (value) => { errors += value; } } });
+	assert.equal(status, 1);
+	assert.equal(spawned, false);
+	assert.match(errors, /drifted\.roc:3: .*one column short/);
 });

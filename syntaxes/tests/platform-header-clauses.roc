@@ -1,7 +1,7 @@
 # SYNTAX TEST "source.roc" "Platform header clauses"
 
 platform "example"
-# <------- keyword.control.roc
+# <-------- keyword.control.roc
     requires {} { run! : Str => Str }
 #   ^^^^^^^^ keyword.control.roc
     exposes [Host]

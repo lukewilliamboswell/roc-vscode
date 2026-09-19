@@ -20,7 +20,7 @@ with_curlies = if True {
     #                  ^  punctuation.brackets.curly.roc
     "yes"
 } else {
-    #  <~~----  keyword.control.roc
+# ^^^^ keyword.control.roc
     "no"
 }
 
