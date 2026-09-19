@@ -2,7 +2,7 @@
 
 package [Parser] {
 # <------- keyword.control.roc
-#        ^^^^^^ entity.name.namespace.roc
+#        ^^^^^^ storage.type.roc
 #                ^ punctuation.brackets.curly.roc
 
     unicode: "../unicode/main.roc",
@@ -15,4 +15,4 @@ package [Parser] {
 
 import unicode.Grapheme
 #      ^^^^^^^ variable.other.roc
-#              ^^^^^^^^ entity.name.namespace.roc
+#              ^^^^^^^^ storage.type.roc

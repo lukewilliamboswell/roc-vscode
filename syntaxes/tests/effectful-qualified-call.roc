@@ -1,5 +1,5 @@
 # SYNTAX TEST "source.roc" "Effectful qualified calls"
 
 result = Host.run!(command)
-#        ^^^^ entity.name.namespace.roc
+#        ^^^^ storage.type.roc
 #             ^^^^ entity.name.function.roc

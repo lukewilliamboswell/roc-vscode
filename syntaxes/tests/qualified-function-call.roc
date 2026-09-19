@@ -1,5 +1,5 @@
 # SYNTAX TEST "source.roc" "Qualified function calls"
 
 result = List.map(values, transform)
-#        ^^^^ entity.name.namespace.builtin.roc
+#        ^^^^ storage.type.builtin.roc
 #             ^^^ entity.name.function.roc

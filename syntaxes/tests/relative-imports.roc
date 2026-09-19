@@ -3,7 +3,7 @@
 import ./Markup
 # <------ keyword.control.import.roc
 #      ^^ punctuation.separator.path.roc
-#        ^^^^^^ entity.name.namespace.roc
+#        ^^^^^^ storage.type.roc
 
 import ../../shared/Target exposing [Target]
 #      ^^^^^^ punctuation.separator.path.roc
@@ -11,5 +11,5 @@ import ../../shared/Target exposing [Target]
 #                                    ^^^^^^ meta.exposed.roc
 
 import ../ElementId as Id
-#         ^^^^^^^^^ entity.name.namespace.roc
+#         ^^^^^^^^^ storage.type.roc
 #                   ^^ keyword.control.roc

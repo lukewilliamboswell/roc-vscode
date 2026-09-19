@@ -11,4 +11,4 @@ request : Http.Request
 #              ^^^^^^^ storage.type.roc
 
 value = Http.default_request
-#       ^^^^ entity.name.namespace.roc
+#       ^^^^ storage.type.roc
