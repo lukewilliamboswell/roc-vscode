@@ -22,6 +22,9 @@ logs/
 # Local real-world highlighting oracle checkouts
 .oracle-corpus/
 
+# Local grammar benchmark reports
+benchmarks/baselines/
+
 # Nix
 result
 .direnv

@@ -39,7 +39,7 @@ watch:
 
 # Run all the tests
 [parallel]
-test: test-extension test-textmate-grammar
+test: test-extension test-textmate-grammar grammar-bench-test
 
 # Test the extension
 [linux]
@@ -77,3 +77,24 @@ oracle-external *ARGS:
 # Test the local-only oracle harness.
 oracle-test:
     node --test scripts/highlighting-oracle.test.mjs
+
+grammar-bench *ARGS:
+    node scripts/grammar-bench.mjs bench {{ ARGS }}
+
+grammar-bench-save NAME *ARGS:
+    node scripts/grammar-bench.mjs save --name {{ NAME }} {{ ARGS }}
+
+grammar-bench-report REPORT *ARGS:
+    node scripts/grammar-bench.mjs report {{ REPORT }} {{ ARGS }}
+
+grammar-bench-compare BASE CURRENT *ARGS:
+    node scripts/grammar-bench.mjs compare {{ BASE }} {{ CURRENT }} {{ ARGS }}
+
+grammar-diagnose *ARGS:
+    node scripts/grammar-bench.mjs diagnose {{ ARGS }}
+
+grammar-profile *ARGS:
+    node scripts/grammar-bench.mjs profile {{ ARGS }}
+
+grammar-bench-test:
+    node --test scripts/grammar-bench-corpus.test.mjs scripts/grammar-bench.test.mjs
