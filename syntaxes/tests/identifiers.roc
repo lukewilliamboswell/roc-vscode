@@ -12,7 +12,7 @@ tests = {
 #       ^^^^^^^^^^^^^^^^^ variable.other.roc
 
     _ = identifier.selector
-#   ^ variable.other.roc
+#   ^ variable.language.wildcard.roc
 
     bare_tag = Baz
 #   ^^^^^^^^ variable.other.roc
