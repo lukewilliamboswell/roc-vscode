@@ -67,13 +67,6 @@ jobs:
         env:
           VSIX: ${{ steps.vsix.outputs.path }}
 
-      - name: Cache VS Code downloads
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # ratchet:actions/cache@v4
-        if: ${{ github.event_name != 'release' }}
-        with:
-          path: .vscode-test
-          key: vscode-test-${{ runner.os }}-${{ hashFiles('package.json') }}
-
       # Install the VSIX into an isolated VS Code, on both the oldest version it
       # claims to support and the current stable, and drive it against the
       # pinned Roc nightly.

@@ -85,7 +85,6 @@ Before running the upstream tool, the local runner rejects assertion mistakes th
 - **Drifted ranges.** A range that cuts through a word at one edge only has usually slid sideways, which is easy to do on tab-indented lines. A range wholly inside a word is treated as deliberate.
 - **Indented arrows.** `# <--` always measures from column one of the source line, even when the comment is indented, so use carets for indented code.
 - **Empty arrows.** An arrow covers one column per `-`, starting after one column per `~`. The `<` covers nothing, so `# <~~` is an empty range and `# <-----` covers five columns, not six.
-
 - **Unasserted fixtures.** A fixture without a single assertion passes whatever the grammar does.
 - **State gaps.** The upstream tool only tokenizes source lines that carry assertions, passing tokenizer state from one asserted line straight to the next. An unasserted line that opens or closes a region, such as a lone `}` or a multiline string, is never seen. The runner compares that view with a full tokenization and fails where they diverge; assert on every line that opens or closes a region.
 
