@@ -56,10 +56,13 @@ describe("installed extension", () => {
 	it("applies the packaged language configuration", async () => {
 		const { document, editor } = await openFixture("Palette.roc");
 		const line = document.lineAt(0).text;
+		// Editor commands act on the focused editor and apply their edit asynchronously.
+		await waitFor(() => vscode.window.activeTextEditor?.document === document, { message: "the fixture's editor to have focus" });
 		editor.selection = new vscode.Selection(0, 0, 0, 0);
 		await vscode.commands.executeCommand("editor.action.commentLine");
+		await waitFor(() => document.lineAt(0).text !== line, { timeout: 5000, message: "Toggle Line Comment to edit the line" });
 		assert.equal(document.lineAt(0).text, `# ${line}`);
 		await vscode.commands.executeCommand("editor.action.commentLine");
-		assert.equal(document.lineAt(0).text, line);
+		await waitFor(() => document.lineAt(0).text === line, { timeout: 5000, message: "Toggle Line Comment to restore the line" });
 	});
 });

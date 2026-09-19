@@ -68,11 +68,28 @@ The suites, in `test/driver/suites`:
 When the extension cannot start a server at all, the first suite to need one
 reports why and the rest fail immediately instead of timing out one by one.
 
-Two things follow from this setup. Mocha comes from `@vscode/test-cli`'s
-dependencies, because changing `package-lock.json` changes the Nix `npmDeps`
-hash. And CI builds the VSIX once: `build.yaml` tests that file on both ends of
+CI builds the VSIX once: `build.yaml` tests that file on both ends of
 the VS Code range, re-checks its digest, and uploads the same bytes to the
 release.
+
+### Running the Nix parts without Nix installed
+
+The flake build, real Biome and the pre-commit hooks only exist inside Nix. A
+container is enough to run them against the working tree:
+
+```sh
+docker run --rm -v roc-vscode-nix:/nix -v "$PWD":/work -w /work \
+  -e NIX_CONFIG="experimental-features = nix-command flakes" nixos/nix \
+  sh -c 'git config --global --add safe.directory /work &&
+         nix develop --command pre-commit run --all-files;
+         chown -R '"$(id -u):$(id -g)"' /work'
+```
+
+Replace the inner command with `nix build --print-out-paths .#roc-vscode-vsix`
+to produce the VSIX exactly as CI does, then test it with `just test-vsix`.
+After changing `package-lock.json`, refresh the flake's `npmDeps` hash with
+`nix run nixpkgs#prefetch-npm-deps -- package-lock.json`. Note that the `biome`
+package on npm is an unrelated project; the formatter comes from Nix.
 
 ## TextMate grammar tests
 
