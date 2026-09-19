@@ -107,6 +107,42 @@ Before running the upstream tool, the local runner rejects assertion mistakes th
 
 Assertions match scope names exactly: `keyword.control.roc` does not satisfy `keyword.control.import.roc` or the reverse.
 
+## Semantic token audit
+
+VS Code colours a file with the TextMate grammar first and again when the
+language server's semantic tokens arrive. Wherever the two disagree the colours
+visibly jump. `just semantic-audit` measures that against a real server:
+
+```sh
+just semantic-audit                              # roc from $ROC_PATH or PATH
+just semantic-audit --roc ../roc/zig-out/bin/roc # a locally built compiler
+just semantic-audit --no-scopes                  # without our semanticTokenScopes
+just semantic-audit --output before.json         # save a report ...
+just semantic-audit --baseline before.json       # ... and compare with it later
+```
+
+It starts `roc experimental-lsp`, requests `textDocument/semanticTokens/full`
+for `syntaxes/semantic-audit/corpus`, the oracle corpus, the workspace fixtures
+and the syntax snapshot, and reports for every covered span:
+
+- **Colour changes.** Both the TextMate scope and the semantic token are resolved
+  to a foreground in the stock themes of the newest VS Code under `.vscode-test`
+  (run the VSIX tests once to download one, or pass `--themes DIR`). Semantic
+  tokens are resolved as VS Code does: the theme's `semanticTokenColors`, then the
+  `semanticTokenScopes` this extension contributes, then VS Code's built-in
+  fallback scopes.
+- **Three-way roles.** The server, the grammar and the tree-sitter oracle are
+  reduced to the oracle's role vocabulary. `server-differs` means the other two
+  agree with each other and not with the server, which points at the server;
+  `grammar-differs` points at the grammar.
+
+The files in `syntaxes/semantic-audit/corpus` must pass `roc check`, so that
+what the server says about them is what it says about working code. When
+upgrading Roc, run the audit with the old and the new compiler and compare.
+Keep `contributes.semanticTokenScopes` in `package.json` in step with the scopes
+the grammar uses for the same things; that mapping is what stops a correct
+semantic token from changing the colour.
+
 ## Grammar performance laboratory
 
 The repository-owned benchmark uses the vendored `vscode-textmate` and

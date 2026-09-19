@@ -196,7 +196,7 @@ function mostSpecificTextMateRole(scopes) {
 	return { role: null, scope: null };
 }
 
-function assignTreeSitterRoles(source, captures) {
+export function assignTreeSitterRoles(source, captures) {
 	const roles = new Array(source.length).fill(null);
 	const rawScopes = new Array(source.length).fill(null);
 	const priorities = new Int32Array(source.length);
@@ -228,7 +228,7 @@ function assignTreeSitterRoles(source, captures) {
 	return { roles, rawScopes };
 }
 
-function tokenizeTextMate(source, grammar) {
+export function tokenizeTextMate(source, grammar) {
 	const roles = new Array(source.length).fill(null);
 	const rawScopes = new Array(source.length).fill(null);
 	let offset = 0;
@@ -339,7 +339,7 @@ function compareRoles(source, treeRoles, textMateRoles, masked, roleFilter) {
 	return segments;
 }
 
-async function createEngines() {
+export async function createEngines() {
 	verifyVendor();
 	await Parser.init({
 		locateFile() {

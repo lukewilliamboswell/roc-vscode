@@ -97,6 +97,11 @@ oracle-fetch:
 oracle-external *ARGS:
     node scripts/highlighting-oracle.mjs --external {{ ARGS }}
 
+# Compare a real Roc language server's semantic tokens with the TextMate grammar
+# and the tree-sitter oracle. Pass `--roc PATH` to choose the server.
+semantic-audit *ARGS:
+    node scripts/semantic-audit.mjs {{ ARGS }}
+
 # Test the local-only oracle harness.
 oracle-test:
     node --test

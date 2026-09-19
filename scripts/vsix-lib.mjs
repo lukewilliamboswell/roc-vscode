@@ -53,7 +53,7 @@ const REQUIRED = [
 // Anything matching these has leaked out of the development tree.
 const FORBIDDEN = [
 	/^extension\/(?:src|scripts|test|benchmarks|node_modules|\.github|\.vscode-test|\.oracle-corpus)\//,
-	/^extension\/syntaxes\/(?:tests|oracle|snapshots)\//,
+	/^extension\/syntaxes\/(?:tests|oracle|snapshots|semantic-audit)\//,
 	/^extension\/syntaxes\/skipped-tests\.json$/,
 	/\.(?:ts|map|roc|nix|vsix)$/,
 	/^extension\/(?:Justfile|flake\.lock|tsconfig\.json|biome\.json|package-lock\.json)$/,
