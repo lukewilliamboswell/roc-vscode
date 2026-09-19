@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fix line comments: the toggle-comment command now inserts `#` rather than `//`.
+- "Roc: Restart" now really restarts the language server, picks up a changed `roc.path`, and reports a server that cannot be started with the path and setting to fix.
 - Stop shipping the grammar test manifest inside the extension.
 - Add semantic TextMate scopes for functions, parameters, record members, namespaces, tag constructors, type definitions, headers and imports.
 
