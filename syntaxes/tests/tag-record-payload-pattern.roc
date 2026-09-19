@@ -3,9 +3,9 @@
 describe = |result|
 	match result {
 		Found({ value, index }) => value
-#		^^^^^ entity.name.type.constructor.roc
-#		        ^^^^^ variable.other.member.roc
-#		               ^^^^^ variable.other.member.roc
+#	^^^^^ entity.name.type.constructor.roc
+#	        ^^^^^ variable.other.member.roc
+#	               ^^^^^ variable.other.member.roc
 		Missing => "missing"
-#		^^^^^^^ entity.name.type.constructor.roc
+#	^^^^^^^ entity.name.type.constructor.roc
 	}
