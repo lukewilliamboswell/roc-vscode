@@ -54,6 +54,22 @@
 				"path": "./syntaxes/roc.tmLanguage.json"
 			}
 		],
+		"semanticTokenScopes": [
+			{
+				"language": "roc",
+				"scopes": {
+					"namespace": ["variable.other.roc"],
+					"type": ["storage.type.roc"],
+					"type.declaration": ["entity.name.type.definition.roc"],
+					"typeParameter": ["storage.type.parameter.roc"],
+					"parameter": ["variable.parameter.roc"],
+					"variable": ["variable.other.roc"],
+					"property": ["variable.other.member.roc"],
+					"enumMember": ["entity.name.type.constructor.roc"],
+					"function": ["entity.name.function.roc"]
+				}
+			}
+		],
 		"commands": [
 			{
 				"title": "Restart",
