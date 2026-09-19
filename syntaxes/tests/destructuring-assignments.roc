@@ -13,16 +13,22 @@
 #                ^^^^ variable.parameter.roc
 #                         ^^^^ variable.other.roc
 
-[first, ..] = items
-#^^^^^ variable.parameter.roc
-#       ^^ keyword.operator.roc
-#             ^^^^^ variable.other.roc
-
-(left + right) == total
-#^^^^ variable.other.roc
-#       ^^^^^ variable.other.roc
-#              ^^ keyword.operator.roc
-
 plain = (one, two)
 #        ^^^ variable.other.roc
 #             ^^^ variable.other.roc
+
+nested = |pair| {
+#         ^^^^ variable.parameter.roc
+
+    (first, second) = pair
+#    ^^^^^ variable.parameter.roc
+#           ^^^^^^ variable.parameter.roc
+#                     ^^^^ variable.other.roc
+
+    (first + second) == 3
+#    ^^^^^ variable.other.roc
+#            ^^^^^^ variable.other.roc
+#                    ^^ keyword.operator.roc
+
+}
+# <- punctuation.brackets.curly.roc

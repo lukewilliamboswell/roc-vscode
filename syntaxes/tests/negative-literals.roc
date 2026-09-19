@@ -18,9 +18,6 @@ tight = total-1
 #            ^ keyword.operator.arithmetic.roc
 #             ^ constant.numeric.integer.roc
 
-after_call = size() -1
-#                   ^^ constant.numeric.integer.roc
-
 after_index = pair.0 - 2
 #                    ^ keyword.operator.arithmetic.roc
 #                      ^ constant.numeric.integer.roc

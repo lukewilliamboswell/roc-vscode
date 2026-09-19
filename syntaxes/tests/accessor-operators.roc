@@ -12,5 +12,6 @@ entry = Table.Entry.Add(1)
 #            ^ keyword.operator.accessor.roc
 #                  ^ keyword.operator.accessor.roc
 
-rest = [first, ..others]
-#              ^^ keyword.operator.roc
+moved = { ..origin, x: 1 }
+#         ^^ keyword.operator.roc
+#           ^^^^^^ variable.other.roc

@@ -23,6 +23,25 @@ platform "example"
     packages {}
 #   ^^^^^^^^ keyword.control.roc
 
+    provides { "roc_main": main_for_host! }
+#   ^^^^^^^^ keyword.control.roc
 
-value = Stdout
-#       ^^^^^^ entity.name.type.constructor.roc
+    targets: {
+#   ^^^^^^^ keyword.control.roc
+
+        inputs_dir: "targets/",
+#       ^^^^^^^^^^ variable.other.member.roc
+
+    }
+#   ^ punctuation.brackets.curly.roc
+
+
+import Stdout
+#      ^^^^^^ entity.name.namespace.roc
+
+
+main_for_host! : () => {}
+# <-------------- entity.name.function.roc
+
+main_for_host! = || {}
+# <-------------- entity.name.function.roc
