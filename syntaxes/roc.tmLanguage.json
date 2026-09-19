@@ -12,6 +12,9 @@
 			"include": "#imports"
 		},
 		{
+			"include": "#match-patterns"
+		},
+		{
 			"include": "#keywords"
 		},
 		{
@@ -22,9 +25,6 @@
 		},
 		{
 			"include": "#lambdas"
-		},
-		{
-			"include": "#match-patterns"
 		},
 		{
 			"include": "#numbers"
@@ -64,34 +64,7 @@
 			"end": "\\}",
 			"patterns": [
 				{
-					"include": "#keywords"
-				},
-				{
-					"include": "#numbers"
-				},
-				{
-					"include": "#operators"
-				},
-				{
-					"include": "#qualified"
-				},
-				{
-					"include": "#members"
-				},
-				{
-					"include": "#calls"
-				},
-				{
-					"include": "#wildcard"
-				},
-				{
-					"include": "#variables"
-				},
-				{
-					"include": "#constructors"
-				},
-				{
-					"include": "#punctuation"
+					"include": "#interpolated-code"
 				}
 			],
 			"beginCaptures": {
@@ -934,8 +907,8 @@
 		"match-patterns": {
 			"patterns": [
 				{
-					"comment": "A match branch starting with a list, tuple, record or tag payload pattern binds parameters",
-					"begin": "^\\s*(?=(?:[\\[({]|[A-Z][A-Za-z0-9_]*\\().*=>)",
+					"comment": "A match branch or destructuring assignment starting with a list, tuple, record or tag payload pattern binds parameters",
+					"begin": "^\\s*(?=(?:[\\[({]|[A-Z][A-Za-z0-9_]*\\().*=>|[\\[({][^=]*[\\])}]\\s*=(?![=>]))",
 					"end": "(?<=[\\])}])|$",
 					"patterns": [
 						{
@@ -951,6 +924,26 @@
 							"name": "variable.parameter.roc"
 						}
 					}
+				},
+				{
+					"comment": "Loop bindings",
+					"begin": "\\b(for)\\b",
+					"end": "\\b(in)\\b|$",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.repeat.roc"
+						}
+					},
+					"endCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#binders"
+						}
+					]
 				}
 			]
 		},
@@ -1112,6 +1105,63 @@
 				{
 					"name": "storage.type.parameter.roc",
 					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+				}
+			]
+		},
+		"interpolated-code": {
+			"comment": "Expressions inside an interpolation; nested braces and strings must not end it early",
+			"patterns": [
+				{
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#interpolated-code"
+						}
+					]
+				},
+				{
+					"include": "#strings"
+				},
+				{
+					"include": "#keywords"
+				},
+				{
+					"include": "#numbers"
+				},
+				{
+					"include": "#operators"
+				},
+				{
+					"include": "#qualified"
+				},
+				{
+					"include": "#members"
+				},
+				{
+					"include": "#calls"
+				},
+				{
+					"include": "#wildcard"
+				},
+				{
+					"include": "#variables"
+				},
+				{
+					"include": "#constructors"
+				},
+				{
+					"include": "#punctuation"
 				}
 			]
 		}
