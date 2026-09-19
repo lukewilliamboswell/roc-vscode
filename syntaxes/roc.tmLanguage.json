@@ -533,7 +533,7 @@
 							"name": "keyword.operator.roc"
 						},
 						"3": {
-							"name": "storage.type.roc"
+							"name": "entity.name.type.definition.roc"
 						},
 						"4": {
 							"name": "keyword.operator.roc"
@@ -560,7 +560,7 @@
 							"name": "punctuation.brackets.round.roc"
 						},
 						"3": {
-							"name": "storage.type.roc"
+							"name": "entity.name.type.definition.roc"
 						},
 						"4": {
 							"name": "punctuation.brackets.round.roc"
