@@ -48,6 +48,76 @@
 			"license": "UPL-1.0",
 			"licenseFile": "LICENSE",
 			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "basic-cli",
+			"url": "https://github.com/roc-lang/basic-cli.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "http",
+			"url": "https://github.com/roc-lang/http.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "path",
+			"url": "https://github.com/roc-lang/path.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-time",
+			"url": "https://github.com/lukewilliamboswell/roc-time.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-signals",
+			"url": "https://github.com/lukewilliamboswell/roc-signals.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-ray",
+			"url": "https://github.com/lukewilliamboswell/roc-ray.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-platform-template-zig",
+			"url": "https://github.com/lukewilliamboswell/roc-platform-template-zig.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-pdf",
+			"url": "https://github.com/lukewilliamboswell/roc-pdf.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-graph-layout",
+			"url": "https://github.com/lukewilliamboswell/roc-graph-layout.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
+		},
+		{
+			"name": "roc-pandoc",
+			"url": "https://github.com/lukewilliamboswell/roc-pandoc.git",
+			"license": "UPL-1.0",
+			"licenseFile": "LICENSE",
+			"licenseMarker": "Universal Permissive License (UPL), Version 1.0"
 		}
 	]
 }
