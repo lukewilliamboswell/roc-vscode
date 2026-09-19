@@ -53,7 +53,8 @@ test-extension:
 
 # Run the textmate grammar tests
 test-textmate-grammar:
-    npx --no-install --call 'textmate-grammar-test syntaxes/tests/**/*.roc'
+    node scripts/test-textmate-grammar.mjs
+    node --test scripts/test-textmate-grammar.test.mjs
     @# Skip snapshot tests for now
     @# npx --no-install --call 'textmate-grammar-test syntaxes/snapshots/**/*.roc.snap'
 
