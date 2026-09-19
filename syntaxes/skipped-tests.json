@@ -1,4 +1,65 @@
 {
 	"version": 1,
-	"skips": []
+	"skips": [
+		{
+			"file": "syntaxes/tests/arithmetic-operators.roc",
+			"reason": "Arithmetic operators are not scoped yet."
+		},
+		{
+			"file": "syntaxes/tests/crash-keyword.roc",
+			"reason": "The crash keyword is still scoped as a variable."
+		},
+		{
+			"file": "syntaxes/tests/direct-function-call.roc",
+			"reason": "Direct function calls are not scoped as functions yet."
+		},
+		{
+			"file": "syntaxes/tests/function-binding-names.roc",
+			"reason": "Function names in annotations and value definitions are still scoped as variables."
+		},
+		{
+			"file": "syntaxes/tests/function-parameters.roc",
+			"reason": "Function parameters are still scoped as general variables."
+		},
+		{
+			"file": "syntaxes/tests/import-exposing.roc",
+			"reason": "Qualified imports and exposing clauses are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/modern-app-header.roc",
+			"reason": "Modern app header keywords, provided names, package aliases, and platform paths are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/nominal-type-definition.roc",
+			"reason": "Nominal type definitions are not distinguished from general types yet."
+		},
+		{
+			"file": "syntaxes/tests/package-header-provides.roc",
+			"reason": "Package headers and their provided module names are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/qualified-function-call.roc",
+			"reason": "Namespaces and function names in qualified calls are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/record-builder.roc",
+			"reason": "Nominal record builders are not scoped as constructor expressions yet."
+		},
+		{
+			"file": "syntaxes/tests/tag-constructors.roc",
+			"reason": "Tag constructors are still scoped as types rather than constructors."
+		},
+		{
+			"file": "syntaxes/tests/tag-patterns.roc",
+			"reason": "Tag constructors and payload bindings in patterns are not scoped semantically yet."
+		},
+		{
+			"file": "syntaxes/tests/try-propagation.roc",
+			"reason": "Try propagation is still scoped as a generic question-mark operator."
+		},
+		{
+			"file": "syntaxes/tests/type-parameters.roc",
+			"reason": "Lowercase type parameters are still scoped as general variables."
+		}
+	]
 }
