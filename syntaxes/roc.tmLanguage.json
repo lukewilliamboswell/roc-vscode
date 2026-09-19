@@ -718,9 +718,9 @@
 			"match": "\\b[a-z_][A-Za-z0-9_]*(?:!(?!:)|(?=\\())"
 		},
 		"members": {
-			"comment": "Field access, record field shorthand, or record field name",
+			"comment": "Field access, record field shorthand, or record field name. `{ x }` is a block, so shorthand needs a comma",
 			"name": "variable.other.member.roc",
-			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b(?!!|\\()|(?<=[{,]\\s|\\{)(?<!\\$\\{)[a-z_][A-Za-z0-9_]*!?(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*!?)*\\s*\\})|(?<=\\{\\s)(?<!\\$\\{\\s)[a-z_][A-Za-z0-9_]*!?(?=\\s*,)|\\b[a-z_][A-Za-z0-9_]*!?(?=:(?!:))"
+			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b(?!!|\\()|(?<=\\{\\s|\\{)(?<!\\$\\{)[a-z_][A-Za-z0-9_]*!?(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*!?)+\\s*\\})|(?<=,\\s)[a-z_][A-Za-z0-9_]*!?(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*!?)*\\s*\\})|(?<=\\{\\s)(?<!\\$\\{\\s)[a-z_][A-Za-z0-9_]*!?(?=\\s*,)|\\b[a-z_][A-Za-z0-9_]*!?(?=:(?!:))"
 		},
 		"constructors": {
 			"name": "entity.name.type.constructor.roc",
@@ -938,7 +938,7 @@
 			"patterns": [
 				{
 					"comment": "A match branch or destructuring assignment starting with a list, tuple, record or tag payload pattern binds parameters",
-					"begin": "^\\s*(?=(?:[\\[({]|[A-Z][A-Za-z0-9_]*\\().*=>|[\\[({][^=]*[\\])}]\\s*=(?![=>]))",
+					"begin": "^\\s*(?=(?:[\\[({]|[A-Z][A-Za-z0-9_]*\\().*=>|(?:[\\[({]|[A-Z][A-Za-z0-9_]*\\()[^=]*[\\])}]\\s*=(?![=>]))",
 					"end": "(?<=[\\])}])|$",
 					"patterns": [
 						{
