@@ -36,4 +36,4 @@ jobs:
         run: npm ci
 
       - name: Run checks
-        run: just test
+        run: just test-fast

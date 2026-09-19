@@ -2,47 +2,97 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"scopeName": "source.roc",
 	"patterns": [
-		{ "include": "#comments" },
-		{ "include": "#keywords" },
-		{ "include": "#operators" },
-		{ "include": "#variables" },
-		{ "include": "#numbers" },
-		{ "include": "#types" },
-		{ "include": "#punctuation" },
-		{ "include": "#strings" }
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#headers"
+		},
+		{
+			"include": "#imports"
+		},
+		{
+			"include": "#match-patterns"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#definitions"
+		},
+		{
+			"include": "#annotations"
+		},
+		{
+			"include": "#lambdas"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#operators"
+		},
+		{
+			"include": "#qualified"
+		},
+		{
+			"include": "#members"
+		},
+		{
+			"include": "#calls"
+		},
+		{
+			"include": "#wildcard"
+		},
+		{
+			"include": "#variables"
+		},
+		{
+			"include": "#constructors"
+		},
+		{
+			"include": "#punctuation"
+		},
+		{
+			"include": "#strings"
+		}
 	],
 	"repository": {
 		"interpolations": {
 			"name": "meta.interpolation.roc",
-			"match": "\\$\\{[^\"{}]*\\}"
+			"begin": "\\$\\{",
+			"end": "\\}",
+			"patterns": [
+				{
+					"include": "#interpolated-code"
+				}
+			],
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.interpolation.roc"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.interpolation.roc"
+				}
+			}
 		},
 		"escapes": {
 			"name": "constant.character.escape.roc",
-			"match": "\\\\\\(u[a-fA-F]{4,6}\\)"
+			"match": "\\\\(?:[\\\\\\\"'nrt$]|u\\([0-9a-fA-F]{1,8}\\))"
 		},
 		"numbers": {
-			"patterns": [
-				{
-					"comment": "Integer base 16",
-					"name": "constant.numeric.roc",
-					"match": "\\b0x[0-9a-f]+\\b"
+			"comment": "A minus sign directly before a digit, and not directly after a value, is part of the literal",
+			"match": "((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?<!\\.)(?:[0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?(?:\\.(?:F32|F64|Dec))?|[0-9][0-9_]*[eE][-+]?[0-9]+|[0-9][0-9_]*\\.(?:F32|F64|Dec)))|((?:-(?<![A-Za-z0-9_)\\]}]-))?\\b(?:0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*(?:\\.(?:U8|I8|U16|I16|U32|I32|U64|I64|U128|I128))?))",
+			"captures": {
+				"1": {
+					"name": "constant.numeric.float.roc"
 				},
-				{
-					"comment": "Integer base 8",
-					"name": "constant.numeric.roc",
-					"match": "\\b0o[0-7]+\\b"
-				},
-				{
-					"comment": "Integer base 2",
-					"name": "constant.numeric.roc",
-					"match": "\\b0b[01]+\\b"
-				},
-				{
-					"comment": "Integer",
-					"name": "constant.numeric.roc",
-					"match": "\\b[0-9]+(\\.(U8|I8|U16|I16|U32|I32|U64|I64|U128|I128|F32|F64|Dec))?"
+				"2": {
+					"name": "constant.numeric.integer.roc"
 				}
-			]
+			}
 		},
 		"strings": {
 			"patterns": [
@@ -62,9 +112,13 @@
 				},
 				{
 					"comment": "character",
+					"match": "'(?:[^'\\\\]|(\\\\(?:[\\\\\\\"'nrt$]|u\\([0-9a-fA-F]{1,8}\\))))'",
 					"name": "string.quoted.single.char.roc",
-					"begin": "'",
-					"end": "'"
+					"captures": {
+						"1": {
+							"name": "constant.character.escape.roc"
+						}
+					}
 				},
 				{
 					"begin": "\\\\\\\\",
@@ -73,50 +127,41 @@
 					"patterns": [
 						{
 							"include": "#interpolations"
+						},
+						{
+							"include": "#escapes"
 						}
 					]
 				}
 			]
 		},
 		"comments": {
-			"patterns": [
-				{
-					"name": "comment.line.documentation.roc",
-					"match": "##.*$"
+			"match": "(##.*$)|(#.*$)",
+			"captures": {
+				"1": {
+					"name": "comment.line.documentation.roc"
 				},
-				{
-					"match": "#.*$",
+				"2": {
 					"name": "comment.line.roc"
 				}
-			]
+			}
 		},
 		"operators": {
-			"patterns": [
-				{ "name": "keyword.operator.roc", "match": "\\|>" },
-				{ "name": "keyword.operator.roc", "match": "\\b(or|and)\\b" },
-				{ "name": "keyword.operator.roc", "match": "!=" },
-				{ "name": "keyword.operator.roc", "match": "!" },
-				{ "name": "keyword.operator.roc", "match": "->" },
-				{ "name": "keyword.operator.roc", "match": "=>" },
-				{ "name": "keyword.operator.roc", "match": ">=" },
-				{ "name": "keyword.operator.roc", "match": "<=" },
-				{ "name": "keyword.operator.roc", "match": ">" },
-				{ "name": "keyword.operator.roc", "match": "<" },
-				{ "name": "keyword.operator.roc", "match": "==" },
-				{ "name": "keyword.operator.roc", "match": ":=" },
-				{ "name": "keyword.operator.roc", "match": "\\.\\." },
-				{ "name": "keyword.operator.roc", "match": "\\.\\.\\." },
-				{ "name": "keyword.operator.roc", "match": "\\?\\?" },
-				{ "name": "keyword.operator.roc", "match": "::" },
-				{
-					"match": "=",
+			"match": "(\\|>|\\b(?:or|and)\\b|!=|!|->|=>|>=|<=|>|<|==|:=|\\.\\.\\.?|\\?\\?|::)|(=)|(\\?)|(//|[-+*/%])",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.roc"
+				},
+				"2": {
 					"name": "keyword.operator.assignment.roc"
 				},
-				{
-					"match": "\\?",
-					"name": "keyword.operator.question.roc"
+				"3": {
+					"name": "keyword.control.return.roc"
+				},
+				"4": {
+					"name": "keyword.operator.arithmetic.roc"
 				}
-			]
+			}
 		},
 		"variables": {
 			"name": "variable.other.roc",
@@ -124,53 +169,999 @@
 			"comment": "Uses a negative lookbehind to exclude a presceding dot (e.g. `.identifier`), but include two presceding dots (e.g. `..identifier`)"
 		},
 		"keywords": {
+			"match": "\\b(?:(True|False)|(if|else|match)|(for|while)|(return)|(import|as|in|var|dbg|expect|where|break|crash))\\b",
+			"captures": {
+				"1": {
+					"name": "constant.language.roc"
+				},
+				"2": {
+					"name": "keyword.control.conditional.roc"
+				},
+				"3": {
+					"name": "keyword.control.repeat.roc"
+				},
+				"4": {
+					"name": "keyword.control.return.roc"
+				},
+				"5": {
+					"name": "keyword.control.roc"
+				}
+			}
+		},
+		"punctuation": {
+			"match": "(,)|(:)|(\\|)|([{}]|\\.(?=\\{))|([()])|([\\[\\]])|(\\.)",
+			"captures": {
+				"1": {
+					"name": "punctuation.comma.roc"
+				},
+				"2": {
+					"name": "punctuation.colon.roc"
+				},
+				"3": {
+					"name": "punctuation.other.roc"
+				},
+				"4": {
+					"name": "punctuation.brackets.curly.roc"
+				},
+				"5": {
+					"name": "punctuation.brackets.round.roc"
+				},
+				"6": {
+					"name": "punctuation.brackets.square.roc"
+				},
+				"7": {
+					"name": "keyword.operator.accessor.roc"
+				}
+			}
+		},
+		"headers": {
 			"patterns": [
 				{
-					"name": "constant.language.roc",
-					"match": "\\b(True|False)\\b",
-					"comment": "TODO: Are these actually keywords now?"
+					"comment": "app header",
+					"begin": "^(app)\\b",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						}
+					},
+					"end": "(?<=\\})|^(?=[A-Za-z_])",
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"begin": "\\[",
+							"end": "\\]",
+							"beginCaptures": {
+								"0": {
+									"name": "punctuation.brackets.square.roc"
+								}
+							},
+							"endCaptures": {
+								"0": {
+									"name": "punctuation.brackets.square.roc"
+								}
+							},
+							"patterns": [
+								{
+									"include": "#comments"
+								},
+								{
+									"name": "meta.provided.roc",
+									"match": "[a-z_][A-Za-z0-9_]*!?"
+								},
+								{
+									"name": "entity.name.namespace.roc",
+									"match": "[A-Z][A-Za-z0-9_]*"
+								},
+								{
+									"include": "#punctuation"
+								}
+							]
+						},
+						{
+							"begin": "\\{",
+							"end": "\\}",
+							"beginCaptures": {
+								"0": {
+									"name": "punctuation.brackets.curly.roc"
+								}
+							},
+							"endCaptures": {
+								"0": {
+									"name": "punctuation.brackets.curly.roc"
+								}
+							},
+							"patterns": [
+								{
+									"include": "#comments"
+								},
+								{
+									"comment": "Only the platform's location is a package scope",
+									"match": "\\b(platform)\\s+(\\\"[^\\\"]*\\\")",
+									"captures": {
+										"1": {
+											"name": "keyword.control.roc"
+										},
+										"2": {
+											"name": "string.quoted.double.roc meta.package.roc"
+										}
+									}
+								},
+								{
+									"name": "keyword.control.roc",
+									"match": "\\bplatform\\b"
+								},
+								{
+									"comment": "The platform's package alias",
+									"name": "meta.package.roc",
+									"match": "[a-z_][A-Za-z0-9_]*(?=\\s*:\\s*platform\\b)"
+								},
+								{
+									"name": "variable.other.roc",
+									"match": "[a-z_][A-Za-z0-9_]*(?=\\s*:)"
+								},
+								{
+									"include": "#strings"
+								},
+								{
+									"include": "#punctuation"
+								}
+							]
+						}
+					]
 				},
 				{
-					"name": "keyword.control.roc",
-					"match": "\\b(if|else|import|as|for|in|return|match|var|while|dbg|expect|where)\\b"
+					"comment": "package header: dependencies are plain strings",
+					"begin": "^(package)\\b",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						}
+					},
+					"end": "(?<=\\})|^(?=[A-Za-z_])",
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"begin": "\\[",
+							"end": "\\]",
+							"beginCaptures": {
+								"0": {
+									"name": "punctuation.brackets.square.roc"
+								}
+							},
+							"endCaptures": {
+								"0": {
+									"name": "punctuation.brackets.square.roc"
+								}
+							},
+							"patterns": [
+								{
+									"include": "#comments"
+								},
+								{
+									"name": "meta.provided.roc",
+									"match": "[a-z_][A-Za-z0-9_]*!?"
+								},
+								{
+									"name": "entity.name.namespace.roc",
+									"match": "[A-Z][A-Za-z0-9_]*"
+								},
+								{
+									"include": "#punctuation"
+								}
+							]
+						},
+						{
+							"begin": "\\{",
+							"end": "\\}",
+							"beginCaptures": {
+								"0": {
+									"name": "punctuation.brackets.curly.roc"
+								}
+							},
+							"endCaptures": {
+								"0": {
+									"name": "punctuation.brackets.curly.roc"
+								}
+							},
+							"patterns": [
+								{
+									"include": "#comments"
+								},
+								{
+									"name": "variable.other.roc",
+									"match": "[a-z_][A-Za-z0-9_]*(?=\\s*:)"
+								},
+								{
+									"include": "#strings"
+								},
+								{
+									"include": "#punctuation"
+								}
+							]
+						}
+					]
+				},
+				{
+					"comment": "Modules exposed by a platform",
+					"begin": "^\\s+(exposes)\\s*(\\[)",
+					"end": "\\]",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						},
+						"2": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"name": "entity.name.namespace.roc",
+							"match": "[A-Z][A-Za-z0-9_]*"
+						},
+						{
+							"include": "#punctuation"
+						}
+					]
+				},
+				{
+					"comment": "Platform header clauses",
+					"match": "^(?:(platform)(?=\\s*\")|\\s+(requires|exposes|packages|provides|hosted)(?=\\s*[\\[{])|\\s+(targets)(?=:))",
+					"captures": {
+						"1": {
+							"name": "keyword.control.roc"
+						},
+						"2": {
+							"name": "keyword.control.roc"
+						},
+						"3": {
+							"name": "keyword.control.roc"
+						}
+					}
 				}
 			]
 		},
-		"types": {
-			"name": "storage.type.roc",
-			"match": "\\b[A-Z][A-Za-z_0-9]*\\b"
-		},
-		"punctuation": {
+		"imports": {
 			"patterns": [
 				{
-					"name": "punctuation.comma.roc",
+					"match": "\\b(import)\\s+(?:([a-z_][A-Za-z0-9_]*)(\\.)|((?:\\.\\.?/)+))?([A-Z][A-Za-z0-9_]*)?",
+					"captures": {
+						"1": {
+							"name": "keyword.control.import.roc"
+						},
+						"2": {
+							"name": "variable.other.roc"
+						},
+						"3": {
+							"name": "keyword.operator.accessor.roc"
+						},
+						"4": {
+							"name": "punctuation.separator.path.roc"
+						},
+						"5": {
+							"name": "entity.name.namespace.roc"
+						}
+					}
+				},
+				{
+					"begin": "\\b(exposing)\\s*(\\[)",
+					"end": "\\]",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.import.roc"
+						},
+						"2": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"name": "keyword.control.roc",
+							"match": "\\bas\\b"
+						},
+						{
+							"name": "meta.exposed.roc",
+							"match": "[A-Za-z_][A-Za-z0-9_]*!?"
+						},
+						{
+							"include": "#punctuation"
+						}
+					]
+				}
+			]
+		},
+		"definitions": {
+			"patterns": [
+				{
+					"comment": "Nominal type (:= or ::) or type alias (:) definition",
+					"begin": "^\\s*(?:([A-Z][A-Za-z0-9_]*)\\s*(:=|::)|([A-Z][A-Za-z0-9_]*)\\s+(:))(?=\\s|$)",
+					"end": "$|(?=\\.\\{)",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.type.definition.roc"
+						},
+						"2": {
+							"name": "keyword.operator.roc"
+						},
+						"3": {
+							"name": "storage.type.roc"
+						},
+						"4": {
+							"name": "keyword.operator.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Type definition head with type parameters",
+					"begin": "^\\s*(?:([A-Z][A-Za-z0-9_]*)(\\()(?=[a-z_, ]*\\)\\s*(?::=|::))|([A-Z][A-Za-z0-9_]*)(\\()(?=[a-z_, ]*\\)\\s+:\\s))",
+					"end": "\\)",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.type.definition.roc"
+						},
+						"2": {
+							"name": "punctuation.brackets.round.roc"
+						},
+						"3": {
+							"name": "storage.type.roc"
+						},
+						"4": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"name": "storage.type.parameter.roc",
+							"match": "[a-z_][A-Za-z0-9_]*"
+						},
+						{
+							"include": "#punctuation"
+						}
+					]
+				},
+				{
+					"comment": "Definition operator after type parameters",
+					"begin": ":(?<=\\)\\s:)[:=]?(?=\\s|$)|:[:=](?<=\\):[:=])(?=\\s|$)",
+					"end": "$|(?=\\.\\{)",
+					"beginCaptures": {
+						"0": {
+							"name": "keyword.operator.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Function annotation or lambda binding",
+					"match": "^\\s*([a-z_][A-Za-z0-9_]*!?)(?=\\s+:\\s.*[-=]>|\\s*=\\s*\\|)",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.roc"
+						}
+					}
+				}
+			]
+		},
+		"annotations": {
+			"comment": "Type annotation: from a spaced colon to the end of the line, or to the method block of a nominal type. Bracketed types may continue over several lines.",
+			"begin": ":(?<=\\s:)[:=]?(?=\\s|$)",
+			"end": "$|(?=\\.\\{)",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.colon.roc"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#type-expression"
+				}
+			]
+		},
+		"type-expression": {
+			"comment": "A type; commas at this level separate function arguments, record fields or tuple elements",
+			"patterns": [
+				{
+					"include": "#type-atoms"
+				},
+				{
+					"name": "punctuation.comma.type.roc",
 					"match": ","
 				},
 				{
-					"name": "punctuation.colon.roc",
-					"match": ":"
+					"include": "#punctuation"
+				}
+			]
+		},
+		"lambdas": {
+			"comment": "Lambda parameters; the closing bar must be on the same line",
+			"begin": "\\|(?=[^|]*\\|)(?!>)",
+			"end": "\\||$",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.other.roc"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.other.roc"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#binders"
+				}
+			]
+		},
+		"tag-payload": {
+			"begin": "\\b([A-Z][A-Za-z0-9_]*)(\\()",
+			"end": "\\)",
+			"beginCaptures": {
+				"1": {
+					"name": "entity.name.type.constructor.roc"
+				},
+				"2": {
+					"name": "punctuation.brackets.round.roc"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.brackets.round.roc"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#binders"
+				}
+			]
+		},
+		"qualified": {
+			"patterns": [
+				{
+					"name": "storage.type.roc",
+					"match": "\\.(?<=\\}\\.)[A-Z][A-Za-z0-9_]*",
+					"comment": "Record builder suffix"
 				},
 				{
-					"name": "punctuation.other.roc",
-					"match": "\\|"
+					"comment": "Namespace qualifier, optionally followed by a pure call",
+					"match": "\\b(?:((?:Bool|Box|Decode|Dict|Encode|Hash|Inspect|List|Num|Result|Set|Str))|([A-Z][A-Za-z0-9_]*))(\\.)(?:([a-z_][A-Za-z0-9_]*)(?=\\()|(?=[A-Za-z_]))",
+					"captures": {
+						"1": {
+							"name": "entity.name.namespace.builtin.roc"
+						},
+						"2": {
+							"name": "entity.name.namespace.roc"
+						},
+						"3": {
+							"name": "keyword.operator.accessor.roc"
+						},
+						"4": {
+							"name": "entity.name.function.roc"
+						}
+					}
+				}
+			]
+		},
+		"calls": {
+			"comment": "Call, method call or effectful function reference",
+			"name": "entity.name.function.roc",
+			"match": "\\b[a-z_][A-Za-z0-9_]*(?:!(?!:)|(?=\\())"
+		},
+		"members": {
+			"comment": "Field access, record field shorthand, or record field name",
+			"name": "variable.other.member.roc",
+			"match": "(?<=[a-z0-9_)\\]?]\\.)[a-z_][A-Za-z0-9_]*\\b(?!!|\\()|(?<=[{,]\\s|\\{)(?<!\\$\\{)[a-z_][A-Za-z0-9_]*!?(?=(?:\\s*,\\s*[a-z_][A-Za-z0-9_]*!?)*\\s*\\})|(?<=\\{\\s)(?<!\\$\\{\\s)[a-z_][A-Za-z0-9_]*!?(?=\\s*,)|\\b[a-z_][A-Za-z0-9_]*!?(?=:(?!:))"
+		},
+		"constructors": {
+			"name": "entity.name.type.constructor.roc",
+			"match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+		},
+		"tag-union-type": {
+			"begin": "\\[",
+			"end": "\\]",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.brackets.square.type.roc"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.brackets.square.type.roc"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#comments"
 				},
 				{
-					"name": "punctuation.brackets.curly.roc",
-					"match": "[{}]"
+					"include": "#tag-union-type"
 				},
 				{
-					"name": "punctuation.brackets.round.roc",
-					"match": "[()]"
+					"comment": "Tag payload",
+					"begin": "\\(",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-atoms"
+						},
+						{
+							"include": "#punctuation"
+						}
+					]
 				},
-
 				{
-					"comment": "square brackets",
-					"name": "punctuation.brackets.square.roc",
-					"match": "[\\[\\]]"
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.type.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.type.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
 				},
 				{
-					"match": "\\.",
-					"name": "punctuation.accessor.roc"
+					"name": "keyword.operator.roc",
+					"match": "\\.\\."
+				},
+				{
+					"name": "storage.type.inferred.roc",
+					"match": "\\b_\\b"
+				},
+				{
+					"name": "entity.name.type.variant.roc",
+					"match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+				},
+				{
+					"name": "storage.type.parameter.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+				},
+				{
+					"include": "#type-atoms"
+				},
+				{
+					"include": "#punctuation"
+				}
+			],
+			"comment": "Tag union type: tags are variants, payloads are types"
+		},
+		"wildcard": {
+			"name": "variable.language.wildcard.roc",
+			"match": "(?<![A-Za-z0-9_$])_(?![A-Za-z0-9_])"
+		},
+		"binders": {
+			"comment": "Names bound by a pattern",
+			"patterns": [
+				{
+					"include": "#tag-payload"
+				},
+				{
+					"comment": "Record pattern: fields are members, renamed bindings are parameters",
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"patterns": [
+						{
+							"name": "variable.parameter.roc",
+							"match": "(?<=:\\s)[a-z_][A-Za-z0-9_]*\\b"
+						},
+						{
+							"include": "#wildcard"
+						},
+						{
+							"name": "variable.other.member.roc",
+							"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+						},
+						{
+							"name": "keyword.operator.roc",
+							"match": "\\.\\."
+						},
+						{
+							"include": "#numbers"
+						},
+						{
+							"include": "#constructors"
+						},
+						{
+							"include": "#punctuation"
+						},
+						{
+							"include": "#strings"
+						}
+					]
+				},
+				{
+					"begin": "\\[",
+					"end": "\\]",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#binders"
+						}
+					]
+				},
+				{
+					"begin": "\\(",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#binders"
+						}
+					]
+				},
+				{
+					"name": "keyword.operator.roc",
+					"match": "\\.\\."
+				},
+				{
+					"name": "keyword.control.roc",
+					"match": "\\bas\\b"
+				},
+				{
+					"include": "#wildcard"
+				},
+				{
+					"name": "variable.parameter.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+				},
+				{
+					"include": "#numbers"
+				},
+				{
+					"include": "#constructors"
+				},
+				{
+					"include": "#punctuation"
+				},
+				{
+					"include": "#strings"
+				}
+			]
+		},
+		"match-patterns": {
+			"patterns": [
+				{
+					"comment": "A match branch or destructuring assignment starting with a list, tuple, record or tag payload pattern binds parameters",
+					"begin": "^\\s*(?=(?:[\\[({]|[A-Z][A-Za-z0-9_]*\\().*=>|[\\[({][^=]*[\\])}]\\s*=(?![=>]))",
+					"end": "(?<=[\\])}])|$",
+					"patterns": [
+						{
+							"include": "#binders"
+						}
+					]
+				},
+				{
+					"comment": "A match branch that binds the whole value",
+					"match": "^\\s*((?!_\\s)[a-z_][A-Za-z0-9_]*)(?=\\s+(?:=>|if\\b.*=>))",
+					"captures": {
+						"1": {
+							"name": "variable.parameter.roc"
+						}
+					}
+				},
+				{
+					"comment": "Loop bindings",
+					"begin": "\\b(for)\\b",
+					"end": "\\b(in)\\b|$",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.repeat.roc"
+						}
+					},
+					"endCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#binders"
+						}
+					]
+				}
+			]
+		},
+		"type-atoms": {
+			"patterns": [
+				{
+					"comment": "where clause: method requirements on type variables",
+					"begin": "\\b(where)\\s*(\\[)",
+					"end": "\\]",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.control.roc"
+						},
+						"2": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.square.roc"
+						}
+					},
+					"patterns": [
+						{
+							"comment": "where-clause method requirement",
+							"match": "\\b([a-z_][A-Za-z0-9_]*)(\\.)([a-z_][A-Za-z0-9_]*)(?=\\s+:\\s)",
+							"captures": {
+								"1": {
+									"name": "storage.type.parameter.roc"
+								},
+								"2": {
+									"name": "keyword.operator.accessor.roc"
+								},
+								"3": {
+									"name": "entity.name.function.roc"
+								}
+							}
+						},
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"name": "keyword.control.roc",
+					"match": "\\bwhere\\b"
+				},
+				{
+					"match": "(:(?<=\\s:)[:=]?(?=\\s|$))|(->|=>|\\.\\.)",
+					"captures": {
+						"1": {
+							"name": "punctuation.colon.roc"
+						},
+						"2": {
+							"name": "keyword.operator.roc"
+						}
+					}
+				},
+				{
+					"name": "storage.type.inferred.roc",
+					"match": "\\b_\\b"
+				},
+				{
+					"name": "variable.other.member.type.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*(?=\\s+:\\s)"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#tag-union-type"
+				},
+				{
+					"comment": "Record type",
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.type.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.type.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Parenthesized or tuple type",
+					"begin": "\\((?<![A-Za-z0-9_]\\()",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.type.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.type.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-expression"
+						}
+					]
+				},
+				{
+					"comment": "Type application: arguments are separated by ordinary commas",
+					"begin": "\\(",
+					"end": "\\)",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#type-atoms"
+						},
+						{
+							"include": "#punctuation"
+						}
+					]
+				},
+				{
+					"comment": "Module qualifier of a type",
+					"match": "\\b([A-Z][A-Za-z0-9_]*)(\\.)(?=[A-Z])",
+					"captures": {
+						"1": {
+							"name": "storage.type.roc"
+						},
+						"2": {
+							"name": "keyword.operator.accessor.roc"
+						}
+					}
+				},
+				{
+					"match": "\\b(?:((?:Bool|Box|Dec|Decode|Dict|Encode|Hash|Inspect|Int|List|Num|Result|Set|Str|F32|F64|[IU](?:8|16|32|64|128)))|([A-Z][A-Za-z0-9_]*))\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.builtin.roc"
+						},
+						"2": {
+							"name": "storage.type.roc"
+						}
+					}
+				},
+				{
+					"name": "storage.type.parameter.roc",
+					"match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+				}
+			]
+		},
+		"interpolated-code": {
+			"comment": "Expressions inside an interpolation; nested braces and strings must not end it early",
+			"patterns": [
+				{
+					"begin": "\\{",
+					"end": "\\}",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.roc"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#interpolated-code"
+						}
+					]
+				},
+				{
+					"include": "#strings"
+				},
+				{
+					"include": "#keywords"
+				},
+				{
+					"include": "#numbers"
+				},
+				{
+					"include": "#operators"
+				},
+				{
+					"include": "#qualified"
+				},
+				{
+					"include": "#members"
+				},
+				{
+					"include": "#calls"
+				},
+				{
+					"include": "#wildcard"
+				},
+				{
+					"include": "#variables"
+				},
+				{
+					"include": "#constructors"
+				},
+				{
+					"include": "#punctuation"
 				}
 			]
 		}

@@ -1,0 +1,21 @@
+{
+	"tag": "nightly-2026-09-18-1d982dc",
+	"assets": {
+		"linux-x64": {
+			"name": "roc_nightly-linux_x86_64-2026-09-18-1d982dc.tar.gz",
+			"sha256": "503e6e573495674ddfe57e3db5390c403afa3764a7bb2b87c567f391beda5df5"
+		},
+		"linux-arm64": {
+			"name": "roc_nightly-linux_arm64-2026-09-18-1d982dc.tar.gz",
+			"sha256": "bd0f35d221031e289fafa0a1f24d39e18e6524c70d8b1ab926949b636bf51151"
+		},
+		"darwin-arm64": {
+			"name": "roc_nightly-macos_apple_silicon-2026-09-18-1d982dc.tar.gz",
+			"sha256": "3e27f5020ab8ef848b6facf5ed213c464795695f589f3341263823944cfe4cff"
+		},
+		"darwin-x64": {
+			"name": "roc_nightly-macos_x86_64-2026-09-18-1d982dc.tar.gz",
+			"sha256": "6479edcf15cae24c31242f32477dbfff17fbee836927e0f6128eeb3993286495"
+		}
+	}
+}

@@ -19,6 +19,15 @@ images/*.png
 *.log
 logs/
 
+# Local real-world highlighting oracle checkouts
+.oracle-corpus/
+
+# Local grammar benchmark reports
+benchmarks/baselines/
+
 # Nix
 result
 .direnv
+
+# Pinned Roc nightly used by the VSIX integration tests
+.roc-nightly/

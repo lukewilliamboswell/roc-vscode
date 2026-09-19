@@ -7,16 +7,16 @@ x = !True or False and True?
 #            ^^^^^ constant.language.roc
 #                  ^^^ keyword.operator.roc
 #                      ^^^^ constant.language.roc
-#                          ^ keyword.operator.question.roc
+#                          ^ keyword.control.return.roc
 
 # Postfix question mark
 maybe = value?
-#            ^ keyword.operator.question.roc
+#            ^ keyword.control.return.roc
 
 # Chained question mark with accessor
 nested = data.get("key")?.get("nested")?
-#                       ^ keyword.operator.question.roc
-#                                      ^ keyword.operator.question.roc
+#                       ^ keyword.control.return.roc
+#                                      ^ keyword.control.return.roc
 
 # Question mark with ?? default
 with_default = get_value() ?? 0

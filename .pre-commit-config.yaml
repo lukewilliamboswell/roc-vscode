@@ -13,6 +13,8 @@ repos:
         language: system
         entry: end-of-file-fixer
         types: [text]
+        # Vendored files are pinned by hash in syntaxes/oracle/vendor/manifest.json
+        exclude: ^syntaxes/oracle/vendor/
       - name: Remove trailing whitespace
         id: trailing-whitespace-fixer
         language: system
@@ -59,6 +61,11 @@ repos:
         language: system
         entry: scripts/roc-format-spaces.sh
         files: \.roc$
+        # Grammar fixtures carry column-exact assertion comments, which the
+        # formatter re-indents and so silently breaks; some are deliberately
+        # unformatted or partial code. The VSIX test workspace includes a file
+        # that must stay unformatted.
+        exclude: ^(syntaxes/tests/|test/fixtures/)
 
       # Textmate Grammar
       - name: Update Textmate Grammar snapshots

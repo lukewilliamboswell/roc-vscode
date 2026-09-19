@@ -22,7 +22,7 @@
 	"description": "Language support for the Roc programming language",
 	"version": "0.0.5",
 	"engines": {
-		"vscode": "^1.75.0"
+		"vscode": "^1.82.0"
 	},
 	"categories": [
 		"Programming Languages"
@@ -79,7 +79,7 @@
 		}
 	},
 	"scripts": {
-		"test": "vscode-test"
+		"test": "node scripts/test-vsix.mjs"
 	},
 	"dependencies": {
 		"vscode-languageclient": "^9.0.1"
@@ -91,6 +91,7 @@
 		"@vscode/test-cli": "^0.0.12",
 		"@vscode/test-electron": "^2.5.2",
 		"esbuild": "^0.27.2",
+		"mocha": "^11.7.5",
 		"ovsx": "^0.10.11",
 		"textmate-grammar-test": "^0.6.0",
 		"typescript": "^5.9.3"

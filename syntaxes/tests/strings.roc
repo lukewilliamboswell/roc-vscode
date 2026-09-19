@@ -23,14 +23,14 @@ multiline_string =
     \\Line 1
     \\Line 2
     \\Line 3
-#   ^^^^^ string.multiline.roc
+#   ^^^^^^^^ string.multiline.roc
 
 multiline_string_with_interpolation =
     \\Line 1
     \\Line 2
     \\Line 3 ${string}
-#   ^^^^^^^^^^^^^^^ string.multiline.roc
-#            ^^^^^^ meta.interpolation.roc
+#   ^^^^^^^^^^^^^^^^^^ string.multiline.roc
+#            ^^^^^^^^^ meta.interpolation.roc
 
 # Strings with special characters
 

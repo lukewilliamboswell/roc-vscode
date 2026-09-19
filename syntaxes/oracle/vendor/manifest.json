@@ -1,0 +1,23 @@
+{
+	"repository": "https://github.com/faldor20/tree-sitter-roc",
+	"commit": "2760de95b87004ed537151f2467377a6ddafdef0",
+	"treeSitterCli": "0.25.10",
+	"webTreeSitter": "0.25.10",
+	"vscodeTextmate": "9.3.2",
+	"vscodeOniguruma": "2.0.1",
+	"parserAbi": 15,
+	"buildCommand": "npm ci && just build-all",
+	"files": {
+		"tree-sitter-roc.wasm": "43cfe6b55b723c6d7c97c678c37bb79fc0dfa7d0581bcdfd01eb90da2bf1c881",
+		"highlights.scm": "d5d8870ce8ea8323d65ed333f984e58a1dcaaf50674e0be7913db98126e3db03",
+		"LICENSE": "ee6c801f2f6f36d410a229e992791be72a3c57fe914e1cf6bdfeca57bf2fdf0e",
+		"web-tree-sitter.cjs": "aceb870a1ad6d6ff23acf6bbb2e45d5bd01e4a7adf46bcfe94d9c1dcf4d5074f",
+		"web-tree-sitter.wasm": "f38dcc4b43b818f9a0785bc1c6d5611a75ac4cdd428ff3f02757c34ca4e46d7f",
+		"web-tree-sitter-LICENSE": "5f9cf9fb6acb1972b35ae29119ce563bb60ec097656bc4b69b9bac2d04c7a147",
+		"vscode-textmate.js": "9da91ca33178e8d68ac5b9ea5733258275fe2f1924db02930ef9cf7e0d850e0f",
+		"vscode-textmate-LICENSE.md": "b5cb7ff7859e7d282d98fc43ab081b0dda5dc659dc3385cf65740c759a7e6a6c",
+		"vscode-oniguruma.js": "d49f2bfcbffca8732aac82fb84db5aab2521bcf0acb612f27454dc75cab85b82",
+		"vscode-oniguruma.wasm": "76ebc1f0d87b2e7449a45ff3cd1a1546a9f05f54bdac44ee03e8a2b8348897be",
+		"vscode-oniguruma-LICENSE.txt": "ddde8aba8fe72b4830e27901fc78733eb6db7b6c653161075de213a6adeda3fd"
+	}
+}

@@ -1,4 +1,4 @@
-name: Build
+name: Build, test and release
 
 permissions: {}
 
@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build and test the VSIX
     permissions:
       contents: write  # for `gh release upload`
     runs-on: ubuntu-latest
@@ -45,12 +45,38 @@ jobs:
       - name: Build Nix package
         run: nix build --no-link .#roc-vscode
 
+      # Build the VSIX exactly once. Every later step, including the release
+      # upload, uses this file: what is tested is what ships.
       - name: Build VSIX
+        id: vsix
         run: |
           mkdir -p build/
-          cat "$(nix build --no-link --print-out-paths .#roc-vscode-vsix)" > "build/roc-vscode-$VERSION.vsix"
+          version="$(jq --raw-output .version package.json)"
+          cat "$(nix build --no-link --print-out-paths .#roc-vscode-vsix)" > "build/roc-vscode-$version.vsix"
+          echo "path=build/roc-vscode-$version.vsix" >> "$GITHUB_OUTPUT"
+          sha256sum "build/roc-vscode-$version.vsix" | tee build/SHA256SUMS
+
+      - name: Use Nix dev shell for subsequent steps
+        uses: rrbutani/use-nix-shell-action@59a52b2b9bbfe3cc0e7deb8f9059abe37a439edf  # ratchet:rrbutani/use-nix-shell-action@v1
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Inspect the VSIX
+        run: just check-vsix "$VSIX"
         env:
-          VERSION: ${{ github.event.release.tag_name }}
+          VSIX: ${{ steps.vsix.outputs.path }}
+
+      # Install the VSIX into an isolated VS Code, on both the oldest version it
+      # claims to support and the current stable, and drive it against the
+      # pinned Roc nightly.
+      - name: Test the VSIX end to end
+        run: just test-vsix-matrix "$VSIX" --roc pinned
+        env:
+          VSIX: ${{ steps.vsix.outputs.path }}
+
+      - name: Check the VSIX is unchanged since it was built
+        run: sha256sum --check build/SHA256SUMS
 
       - name: Upload the artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # ratchet:actions/upload-artifact@v7
@@ -60,21 +86,22 @@ jobs:
 
       - name: Upload artifact to release
         if: github.event_name == 'release' # Only upload when a release is published
-        run: gh release upload "$VERSION" "out/roc-vscode-$VERSION.vsix"
+        run: gh release upload "$VERSION" "$VSIX" build/SHA256SUMS
         env:
           VERSION: ${{ github.ref_name }}
+          VSIX: ${{ steps.vsix.outputs.path }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Don't upload anything to VSCode Marketplace or Open VSX yet
 
       # - name: Publish to VSCode Marketplace
       #   if: github.event_name == 'release' # Only publish when a release is published
-      #   run: npx --no-install --call 'vsce publish out/*.vsix'
+      #   run: npx --no-install --call "vsce publish --packagePath $VSIX"
       #   env:
       #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       # - name: Publish to Open VSX
       #   if: github.event_name == 'release' # Only publish when a release is published
-      #   run: npx --no-install --call 'ovsx publish out/*.vsix'
+      #   run: npx --no-install --call "ovsx publish $VSIX"
       #   env:
       #     OVSX_PAT: ${{ secrets.OVSX_PAT }}
